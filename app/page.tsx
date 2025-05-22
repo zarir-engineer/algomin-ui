@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import axios from 'axios';
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
 export default function Home() {
   const [form, setForm] = useState({
@@ -42,8 +43,8 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-//       const res = await axios.post('https://your-backend-url/order/place', form);
-      const res = await axios.post('http://localhost:8000/order/place', form);
+      const res = await axios.post(`${apiBaseUrl}/order/place`, form);
+//       const res = await axios.post('http://localhost:8000/order/place', form);
       setResult(res.data);
     } catch (error: any) {
       setResult(error.response?.data || error.message);
