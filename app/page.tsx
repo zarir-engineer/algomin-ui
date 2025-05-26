@@ -1,26 +1,17 @@
-// algomin-ui scaffold (React + Tailwind + Railway ready)
-
-// 1. Create your app
-// $ npx create-next-app@latest algomin-ui --typescript --tailwind
-
-// 2. Install ShadCN UI (optional for clean components)
-// $ npx shadcn-ui@latest init
-
-// 3. File: app/page.tsx or src/pages/index.tsx (depending on layout)
+// Combined Final Page: app/page.tsx
 
 'use client'
+
 import { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import axios from 'axios';
-import SymbolAutocomplete from "@/components/SymbolAutocomplete";
 import SymbolSelect from "@/components/SymbolSelect";
-// const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 console.log("+++ ✅ API Base URL from env:", apiBaseUrl);
 
-export default function Home() {
+export default function Page() {
   const [form, setForm] = useState({
     tradingsymbol: '',
     symboltoken: '',
@@ -37,8 +28,9 @@ export default function Home() {
     trailing_sl: false,
     is_exit: false,
   });
-  const [result, setResult] = useState<any>(null);
 
+  const [modal, setModal] = useState({ open: false, title: '', content: '' });
+  const [responseLog, setResponseLog] = useState(null);
   const [copied, setCopied] = useState(false);
 
   const handleCopyLog = () => {
@@ -52,64 +44,60 @@ export default function Home() {
     setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
-  const [modal, setModal] = useState({ open: false, title: '', content: '' });
-  const [responseLog, setResponseLog] = useState(null);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/order/place`, form);
+    if (!form.tradingsymbol || !form.symboltoken) {
+      setModal({
+        open: true,
+        title: "❌ Missing Symbol",
+        content: "Please select a valid trading symbol and token."
+      });
+      return;
+    }
 
+    if (!form.quantity || Number(form.quantity) <= 0) {
+      setModal({
+        open: true,
+        title: "❌ Invalid Quantity",
+        content: "Quantity must be a positive number."
+      });
+      return;
+    }
+
+    if (!['MARKET'].includes(form.ordertype) && (!form.price || Number(form.price) <= 0)) {
+      setModal({
+        open: true,
+        title: "❌ Invalid Price",
+        content: `Price is required for ${form.ordertype} orders.`
+      });
+      return;
+    }
+
+    try {
+      const res = await axios.post(`${apiBaseUrl}/order/place`, form);
       setResponseLog(res.data);
 
       if (res.data?.orderid) {
-        setModal({
-          open: true,
-          title: "✅ Order Placed",
-          content: `Order ID: ${res.data.orderid}`,
-        });
+        setModal({ open: true, title: "✅ Order Placed", content: `Order ID: ${res.data.orderid}` });
       } else {
-        setModal({
-          open: true,
-          title: "⚠️ No Order ID",
-          content: "Order may not have been accepted by broker.",
-        });
+        setModal({ open: true, title: "⚠️ No Order ID", content: "Order may not have been accepted by broker." });
       }
     } catch (err) {
-      console.error("❌ Order Error", err);
-
-      const safeMessage =
-        typeof err?.response?.data === "string"
-          ? "Unexpected server error"
-          : JSON.stringify(err?.response?.data || err.message, null, 2);
-
+      const safeMessage = typeof err?.response?.data === 'string' ? 'Unexpected server error' : JSON.stringify(err?.response?.data || err.message, null, 2);
       setResponseLog(err?.response?.data || err.message);
-
-      setModal({
-        open: true,
-        title: "❌ Order Failed",
-        content: safeMessage,
-      });
+      setModal({ open: true, title: "❌ Order Failed", content: safeMessage });
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 border rounded-xl bg-white shadow-xl space-y-4">
       <h1 className="text-xl font-bold mb-4">📤 Place Order</h1>
+
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         <SymbolSelect
-          value={{
-            symbol: form.tradingsymbol,
-            token: form.symboltoken,
-          }}
-          onChange={({ symbol, token }) =>
-            setForm((prev) => ({
-              ...prev,
-              tradingsymbol: symbol,
-              symboltoken: token,
-            }))
-          }
+          value={{ symbol: form.tradingsymbol, token: form.symboltoken }}
+          onChange={({ symbol, token }) => setForm((prev) => ({ ...prev, tradingsymbol: symbol, symboltoken: token }))}
         />
 
         <div className="flex gap-4">
@@ -123,14 +111,12 @@ export default function Home() {
           </label>
         </div>
 
-
-        <div className="flex gap-2">
-          {["MARKET", "LIMIT", "SL", "SL-M"].map((type) => (
+        <div className="flex gap-2 col-span-2">
+          {['MARKET', 'LIMIT', 'SL', 'SL-M'].map((type) => (
             <button
               key={type}
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                form.ordertype === type ? "bg-black text-white" : "bg-gray-100 text-gray-800"
-              }`}
+              type="button"
+              className={`px-3 py-1 rounded-full text-sm font-medium ${form.ordertype === type ? 'bg-black text-white' : 'bg-gray-100 text-gray-800'}`}
               onClick={() => setForm({ ...form, ordertype: type })}
             >
               {type}
@@ -140,7 +126,6 @@ export default function Home() {
 
         <Input name="price" placeholder="Price (for LIMIT/SL)" onChange={handleChange} />
         <Input name="quantity" placeholder="Quantity" type="number" onChange={handleChange} />
-
         <Input name="stoploss" placeholder="Stop Loss (SL/ROBO)" onChange={handleChange} />
         <Input name="squareoff" placeholder="Square Off (ROBO)" onChange={handleChange} />
 
@@ -156,23 +141,15 @@ export default function Home() {
         <Button className="col-span-2" type="submit">Submit Order</Button>
       </form>
 
-      {/* 🔽 PLACE THIS RIGHT AFTER THE FORM */}
       {responseLog && (
         <div className="mt-6 bg-gray-100 border rounded p-3 text-xs relative max-h-64 overflow-auto">
-          <button
-            onClick={handleCopyLog}
-            className="absolute top-2 right-2 text-xs bg-black text-white px-2 py-1 rounded hover:bg-gray-800"
-          >
+          <button onClick={handleCopyLog} className="absolute top-2 right-2 text-xs text-gray-400 hover:text-black">
             {copied ? "✓ Copied" : "Copy"}
           </button>
-
-          <pre className="whitespace-pre-wrap break-words">
-            {JSON.stringify(responseLog, null, 2)}
-          </pre>
+          <pre className="whitespace-pre-wrap break-words">{JSON.stringify(responseLog, null, 2)}</pre>
         </div>
       )}
 
-      {/* 🔽 PLACE THIS ANYWHERE INSIDE THE JSX, usually after form */}
       {modal.open && (
         <div className="fixed inset-0 z-50 bg-white/20 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
@@ -180,18 +157,11 @@ export default function Home() {
             <p className="text-gray-700 text-sm whitespace-pre-wrap max-h-64 overflow-auto">{modal.content}</p>
             <button
               className="mt-4 px-4 py-2 bg-black text-white rounded"
-              onClick={() => setModal({ open: false, title: "", content: "" })}
+              onClick={() => setModal({ open: false, title: '', content: '' })}
             >
               Close
             </button>
           </div>
-        </div>
-      )}
-
-      {result && (
-        <div className="bg-gray-100 p-4 rounded mt-6">
-          <h2 className="font-semibold">Server Response:</h2>
-          <pre className="text-sm whitespace-pre-wrap">{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
     </div>
