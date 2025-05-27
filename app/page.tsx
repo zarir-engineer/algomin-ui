@@ -15,13 +15,13 @@ export default function Page() {
   const [form, setForm] = useState({
     tradingsymbol: '',
     symboltoken: '',
-    transactiontype: 'BUY',
+    transactiontype: '',
     exchange: 'NSE',
-    ordertype: 'LIMIT',
-    variety: 'NORMAL',
-    producttype: 'INTRADAY',
-    duration: 'DAY',
-    quantity: 1,
+    ordertype: '',
+    variety: '',
+    producttype: '',
+    duration: '',
+    quantity: '',
     price: '',
     stoploss: '',
     squareoff: '',
@@ -44,33 +44,53 @@ export default function Page() {
     setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
+  const getRadioClass = (type: string) => {
+    if (form.transactiontype === type) {
+      if (type === 'BUY') return 'text-green-600 font-semibold transition-colors';
+      if (type === 'SELL') return 'text-red-600 font-semibold transition-colors';
+      if (type === 'INQ') return 'text-gray-600 font-semibold transition-colors';
+    }
+    return 'text-gray-300 font-medium transition-colors';
+  };
+
+  const getRingClass = (type: string) => {
+    if (form.transactiontype === type) {
+      if (type === 'BUY') return 'accent-green-600';
+      if (type === 'SELL') return 'accent-red-600';
+      if (type === 'INQ') return 'accent-gray-500';
+    }
+    return 'accent-gray-300';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.tradingsymbol || !form.symboltoken) {
-      setModal({
-        open: true,
-        title: "❌ Missing Symbol",
-        content: "Please select a valid trading symbol and token."
-      });
+      setModal({ open: true, title: "❌ Missing Symbol", content: "Please select a valid trading symbol and token." });
       return;
     }
-
+    if (!form.transactiontype) {
+      setModal({ open: true, title: "❌ Missing Transaction Type", content: "Please select a transaction type." });
+      return;
+    }
+    if (!form.exchange) {
+      setModal({ open: true, title: "❌ Missing Exchange", content: "Please select an exchange." });
+      return;
+    }
+    if (!form.ordertype) {
+      setModal({ open: true, title: "❌ Missing Order Type", content: "Please select an order type." });
+      return;
+    }
+    if (!form.variety || !form.producttype || !form.duration) {
+      setModal({ open: true, title: "❌ Incomplete Order", content: "Please complete all order configuration fields (variety, producttype, duration)." });
+      return;
+    }
     if (!form.quantity || Number(form.quantity) <= 0) {
-      setModal({
-        open: true,
-        title: "❌ Invalid Quantity",
-        content: "Quantity must be a positive number."
-      });
+      setModal({ open: true, title: "❌ Invalid Quantity", content: "Quantity must be a positive number." });
       return;
     }
-
     if (!['MARKET'].includes(form.ordertype) && (!form.price || Number(form.price) <= 0)) {
-      setModal({
-        open: true,
-        title: "❌ Invalid Price",
-        content: `Price is required for ${form.ordertype} orders.`
-      });
+      setModal({ open: true, title: "❌ Invalid Price", content: `Price is required for ${form.ordertype} orders.` });
       return;
     }
 
@@ -101,13 +121,22 @@ export default function Page() {
         />
 
         <div className="flex gap-4">
+          {['BUY', 'SELL', 'INQ'].map(type => (
+            <label key={type} className="inline-flex items-center transition-colors">
+              <input type="radio" name="transactiontype" value={type} checked={form.transactiontype === type} onChange={handleChange} className={getRingClass(type)} />
+              <span className={`ml-2 ${getRadioClass(type)}`}>{type.charAt(0) + type.slice(1).toLowerCase()}</span>
+            </label>
+          ))}
+        </div>
+
+        <div className="flex gap-4">
           <label className="inline-flex items-center">
-            <input type="radio" name="transactiontype" value="BUY" checked={form.transactiontype === "BUY"} onChange={handleChange} />
-            <span className="ml-2 text-green-600 font-medium">Buy</span>
+            <input type="radio" name="exchange" value="NSE" checked={form.exchange === "NSE"} onChange={handleChange} />
+            <span className="ml-2 text-blue-600 font-medium">NSE</span>
           </label>
           <label className="inline-flex items-center">
-            <input type="radio" name="transactiontype" value="SELL" checked={form.transactiontype === "SELL"} onChange={handleChange} />
-            <span className="ml-2 text-red-600 font-medium">Sell</span>
+            <input type="radio" name="exchange" value="BSE" checked={form.exchange === "BSE"} onChange={handleChange} />
+            <span className="ml-2 text-orange-600 font-medium">BSE</span>
           </label>
         </div>
 
@@ -116,7 +145,7 @@ export default function Page() {
             <button
               key={type}
               type="button"
-              className={`px-3 py-1 rounded-full text-sm font-medium ${form.ordertype === type ? 'bg-black text-white' : 'bg-gray-100 text-gray-800'}`}
+              className={`px-3 py-1 rounded-full text-sm font-medium ${form.ordertype === type ? 'bg-black text-white' : 'bg-gray-100 text-gray-800'} transition-colors`}
               onClick={() => setForm({ ...form, ordertype: type })}
             >
               {type}
