@@ -66,7 +66,7 @@ export default function Page() {
     return form.exchange === exchange ? 'text-gray-800 font-semibold' : 'text-gray-400 font-medium';
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!form.tradingsymbol || !form.symboltoken) {
@@ -107,8 +107,12 @@ export default function Page() {
       } else {
         setModal({ open: true, title: "⚠️ No Order ID", content: "Order may not have been accepted by broker." });
       }
-    } catch (err) {
-      const safeMessage = typeof err?.response?.data === 'string' ? 'Unexpected server error' : JSON.stringify(err?.response?.data || err.message, null, 2);
+    } catch (err: any) {
+      const safeMessage =
+        typeof err?.response?.data === 'string'
+          ? 'Unexpected server error'
+          : JSON.stringify(err?.response?.data || err.message, null, 2);
+
       setResponseLog(err?.response?.data || err.message);
       setModal({ open: true, title: "❌ Order Failed", content: safeMessage });
     }
