@@ -1,4 +1,4 @@
-// Combined Final Page: app/page.tsx
+// Combined Final Page: app/page.tsx with tooltips and variety/producttype/duration dropdowns
 
 'use client'
 
@@ -18,9 +18,9 @@ export default function Page() {
     transactiontype: '',
     exchange: 'NSE',
     ordertype: '',
-    variety: '',
-    producttype: '',
-    duration: '',
+    variety: 'NORMAL',
+    producttype: 'INTRADAY',
+    duration: 'DAY',
     quantity: '',
     price: '',
     stoploss: '',
@@ -60,6 +60,10 @@ export default function Page() {
       if (type === 'INQ') return 'accent-gray-500';
     }
     return 'accent-gray-300';
+  };
+
+  const getExchangeClass = (exchange: string) => {
+    return form.exchange === exchange ? 'text-gray-800 font-semibold' : 'text-gray-400 font-medium';
   };
 
   const handleSubmit = async (e) => {
@@ -115,12 +119,14 @@ export default function Page() {
       <h1 className="text-xl font-bold mb-4">📤 Place Order</h1>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-        <SymbolSelect
-          value={{ symbol: form.tradingsymbol, token: form.symboltoken }}
-          onChange={({ symbol, token }) => setForm((prev) => ({ ...prev, tradingsymbol: symbol, symboltoken: token }))}
-        />
+        <div title="Trading Symbol & Token">
+          <SymbolSelect
+            value={{ symbol: form.tradingsymbol, token: form.symboltoken }}
+            onChange={({ symbol, token }) => setForm((prev) => ({ ...prev, tradingsymbol: symbol, symboltoken: token }))}
+          />
+        </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4" title="Transaction Type">
           {['BUY', 'SELL', 'INQ'].map(type => (
             <label key={type} className="inline-flex items-center transition-colors">
               <input type="radio" name="transactiontype" value={type} checked={form.transactiontype === type} onChange={handleChange} className={getRingClass(type)} />
@@ -129,18 +135,16 @@ export default function Page() {
           ))}
         </div>
 
-        <div className="flex gap-4">
-          <label className="inline-flex items-center">
-            <input type="radio" name="exchange" value="NSE" checked={form.exchange === "NSE"} onChange={handleChange} />
-            <span className="ml-2 text-blue-600 font-medium">NSE</span>
-          </label>
-          <label className="inline-flex items-center">
-            <input type="radio" name="exchange" value="BSE" checked={form.exchange === "BSE"} onChange={handleChange} />
-            <span className="ml-2 text-orange-600 font-medium">BSE</span>
-          </label>
+        <div className="flex gap-4" title="Exchange">
+          {['NSE', 'BSE'].map(ex => (
+            <label key={ex} className="inline-flex items-center transition-colors">
+              <input type="radio" name="exchange" value={ex} checked={form.exchange === ex} onChange={handleChange} />
+              <span className={`ml-2 ${getExchangeClass(ex)}`}>{ex}</span>
+            </label>
+          ))}
         </div>
 
-        <div className="flex gap-2 col-span-2">
+        <div className="flex gap-2 col-span-2" title="Order Type">
           {['MARKET', 'LIMIT', 'SL', 'SL-M'].map((type) => (
             <button
               key={type}
@@ -153,21 +157,37 @@ export default function Page() {
           ))}
         </div>
 
-        <Input name="price" placeholder="Price (for LIMIT/SL)" onChange={handleChange} />
-        <Input name="quantity" placeholder="Quantity" type="number" onChange={handleChange} />
-        <Input name="stoploss" placeholder="Stop Loss (SL/ROBO)" onChange={handleChange} />
-        <Input name="squareoff" placeholder="Square Off (ROBO)" onChange={handleChange} />
+        <select name="variety" value={form.variety} onChange={handleChange} title="Variety">
+          <option value="NORMAL">NORMAL</option>
+          <option value="STOPLOSS">STOPLOSS</option>
+          <option value="ROBO">ROBO</option>
+        </select>
+
+        <select name="producttype" value={form.producttype} onChange={handleChange} title="Product Type">
+          <option value="INTRADAY">INTRADAY</option>
+          <option value="DELIVERY">DELIVERY</option>
+        </select>
+
+        <select name="duration" value={form.duration} onChange={handleChange} title="Duration">
+          <option value="DAY">DAY</option>
+          <option value="IOC">IOC</option>
+        </select>
+
+        <Input name="price" placeholder="Price (for LIMIT/SL)" onChange={handleChange} title="Price" />
+        <Input name="quantity" placeholder="Quantity" type="number" onChange={handleChange} title="Quantity" />
+        <Input name="stoploss" placeholder="Stop Loss (SL/ROBO)" onChange={handleChange} title="Stop Loss" />
+        <Input name="squareoff" placeholder="Square Off (ROBO)" onChange={handleChange} title="Square Off" />
 
         <div className="col-span-2 flex items-center gap-4">
-          <label className="flex items-center gap-2">
+          <label className="flex items-center gap-2" title="Trailing Stop Loss">
             <input type="checkbox" name="trailing_sl" onChange={handleChange} /> Trailing SL
           </label>
-          <label className="flex items-center gap-2">
+          <label className="flex items-center gap-2" title="Exit Order">
             <input type="checkbox" name="is_exit" onChange={handleChange} /> Exit Order
           </label>
         </div>
 
-        <Button className="col-span-2" type="submit">Submit Order</Button>
+        <Button className="col-span-2" type="submit" title="Submit order to broker">Submit Order</Button>
       </form>
 
       {responseLog && (

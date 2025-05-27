@@ -33,7 +33,7 @@ export default function SymbolSelect({
     if (!input) return setFiltered([])
 
     const match = symbols.filter((s) =>
-      s.symbol.toLowerCase().includes(input.toLowerCase())
+      s.symbol.toLowerCase().startsWith(input.toLowerCase())
     )
     setFiltered(match.slice(0, 10))
     setShowDropdown(true)
