@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 interface SymbolSelectProps {
   value: { symbol: string; token: string };
   onChange: (val: { symbol: string; token: string }) => void;
+  error?: boolean;
 }
 
-export default function SymbolSelect({ value, onChange }: SymbolSelectProps) {
+export default function SymbolSelect({ value, onChange, error }: SymbolSelectProps) {
   const [symbols, setSymbols] = useState<{ symbol: string; token: string }[]>([]);
   const [search, setSearch] = useState("");
 
@@ -47,6 +48,7 @@ export default function SymbolSelect({ value, onChange }: SymbolSelectProps) {
         }}
         list="symbol-list"
         placeholder="Start typing symbol..."
+        className={error ? 'border-red-500' : ''}
       />
 
       <datalist id="symbol-list">
