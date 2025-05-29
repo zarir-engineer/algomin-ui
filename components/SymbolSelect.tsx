@@ -1,4 +1,3 @@
-// components/SymbolSelect.tsx
 'use client'
 
 import { useEffect, useState } from "react";
@@ -27,30 +26,38 @@ export default function SymbolSelect({ value, onChange, error }: SymbolSelectPro
     fetchSymbols();
   }, []);
 
+  // Keep input in sync with selected symbol
+  useEffect(() => {
+    if (value?.symbol) {
+      setSearch(value.symbol); // Set search to selected symbol
+    }
+  }, [value.symbol]);
+
   const filtered = symbols.filter(s => s.symbol.toLowerCase().startsWith(search.toLowerCase()));
 
-  const handleSelect = (symbol: string) => {
-    const match = symbols.find(s => s.symbol === symbol);
-    if (match) onChange(match);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearch(val);
+
+    const match = symbols.find(s => s.symbol === val);
+    if (match) {
+      onChange(match);
+    } else {
+      // Clear symboltoken if symbol doesn't match
+      onChange({ symbol: val, token: "" });
+    }
   };
 
   return (
     <div className="flex flex-col relative">
       <label className="text-sm mb-1">Select Trading Symbol</label>
-
       <Input
         value={search}
-        onChange={(e) => {
-          const val = e.target.value;
-          setSearch(val);
-          const match = symbols.find(s => s.symbol === val);
-          if (match) onChange(match);
-        }}
+        onChange={handleChange}
         list="symbol-list"
         placeholder="Start typing symbol..."
         className={error ? 'border-red-500' : ''}
       />
-
       <datalist id="symbol-list">
         {filtered.map((s) => (
           <option key={s.symbol} value={s.symbol} />
