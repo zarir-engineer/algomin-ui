@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { useLiveTicks } from "@/hooks/useLiveTicks";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
-export default function LiveDataPanel({ symbol, broker }) {
+interface LiveDataPanelProps {
+  symbol: string;
+  broker: string;
+}
+
+export default function LiveDataPanel({ symbol, broker }: LiveDataPanelProps) {
   const tick = useLiveTicks(symbol, broker);
   const [trend, setTrend] = useState(null);
   const prevLtp = useRef(null);

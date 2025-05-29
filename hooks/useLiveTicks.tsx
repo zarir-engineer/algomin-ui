@@ -10,13 +10,13 @@ interface Tick {
   timestamp: string;
 }
 
-export function useLiveTicks(symbol: string) {
+export default function useLiveTicks(symbol: string, broker: string) {
   const [tick, setTick] = useState<Tick | null>(null);
 
   useEffect(() => {
-    if (!symbol) return;
+    if (!symbol || !broker) return;
 
-    const socket = new WebSocket('wss://web-production-4e6e.up.railway.app/ws/stream');
+    const socket = new WebSocket(`wss://web-production-4e6e.up.railway.app/ws/stream?broker=${broker}`);
 
     socket.onopen = () => {
       socket.send(JSON.stringify({ action: 'subscribe', symbol }));
@@ -35,7 +35,7 @@ export function useLiveTicks(symbol: string) {
       socket.send(JSON.stringify({ action: 'unsubscribe', symbol }));
       socket.close();
     };
-  }, [symbol]);
+  }, [symbol, broker]);
 
   return tick;
 }
