@@ -25,8 +25,8 @@ export default function Page() {
     broker: 'angel_one'
   });
 
-  const [modal, setModal] = useState({ open: false, title: '', content: '' });
-  const [responseLog, setResponseLog] = useState(null);
+  const [modal, setModal] = useState<{ open: boolean; title: string; content: string }>({ open: false, title: "", content: "" });
+  const [responseLog, setResponseLog] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [showOrderPanel, setShowOrderPanel] = useState(true);
   const [showLiveDataPanel, setShowLiveDataPanel] = useState(false);

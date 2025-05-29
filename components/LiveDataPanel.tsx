@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLiveTicks } from "@/hooks/useLiveTicks";
+import useLiveTicks from "@/hooks/useLiveTicks";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 interface LiveDataPanelProps {
@@ -9,8 +9,9 @@ interface LiveDataPanelProps {
 
 export default function LiveDataPanel({ symbol, broker }: LiveDataPanelProps) {
   const tick = useLiveTicks(symbol, broker);
-  const [trend, setTrend] = useState(null);
-  const prevLtp = useRef(null);
+  const [trend, setTrend] = useState<"up" | "down" | null>(null);
+
+  const prevLtp = useRef<number | null>(null);
 
   useEffect(() => {
     if (tick?.ltp !== undefined) {

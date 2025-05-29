@@ -3,13 +3,43 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SymbolSelect from "@/components/SymbolSelect";
 
-export default function OrderForm({ form, setForm, setResponseLog, setModal }) {
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+type OrderFormData = {
+  tradingsymbol: string;
+  symboltoken: string;
+  transactiontype: string;
+  quantity: string;
+  price: string;
+  stoploss: string;
+  squareoff: string;
+  ordertype: string;
+  trailing_sl: boolean;
+  is_exit: boolean;
+  broker: string;
+  exchange: string;
+  variety: string;
+  producttype: string;
+  duration: string;
+};
+
+type Props = {
+  form: OrderFormData;
+  setForm: React.Dispatch<React.SetStateAction<OrderFormData>>;
+  setResponseLog: (msg: string) => void;
+  setModal: React.Dispatch<React.SetStateAction<{ open: boolean; title: string; content: string }>>;
+};
+
+export default function OrderForm({ form, setForm, setResponseLog, setModal }: Props) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = type === 'checkbox' && 'checked' in e.target ? (e.target as HTMLInputElement).checked : undefined;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Basic validation
@@ -34,8 +64,13 @@ export default function OrderForm({ form, setForm, setResponseLog, setModal }) {
       setResponseLog(data);
       setModal({ open: true, title: "✅ Order Placed", content: JSON.stringify(data, null, 2) });
     } catch (err) {
-      setResponseLog(err.message);
-      setModal({ open: true, title: "❌ Order Failed", content: err.message });
+      if (err instanceof Error) {
+        setResponseLog(err.message);
+        setModal({ open: true, title: "❌ Order Failed", content: err.message });
+      } else {
+        setResponseLog(String(err));
+        setModal({ open: true, title: "❌ Order Failed", content: String(err) });
+      }
     }
   };
 
