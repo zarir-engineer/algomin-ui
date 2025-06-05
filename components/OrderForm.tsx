@@ -122,35 +122,87 @@ export default function OrderForm({ form, setForm, setResponseLog, setModal }: P
           </label>
         ))}
       </div>
+      <div className="col-span-2">
+        <div className="grid grid-cols-3 gap-2">
+          <select
+            name="variety"
+            value={form.variety}
+            onChange={handleChange}
+            className="w-full border rounded px-2 py-1 text-sm"
+          >
+            <option value="NORMAL">NORMAL</option>
+            <option value="STOPLOSS">STOPLOSS</option>
+            <option value="ROBO">ROBO</option>
+          </select>
 
-      <select name="variety" value={form.variety} onChange={handleChange} title="Variety">
-        <option value="NORMAL">NORMAL</option>
-        <option value="STOPLOSS">STOPLOSS</option>
-        <option value="ROBO">ROBO</option>
-      </select>
+          <select
+            name="producttype"
+            value={form.producttype}
+            onChange={handleChange}
+            className="w-full border rounded px-2 py-1 text-sm"
+          >
+            <option value="INTRADAY">INTRADAY</option>
+            <option value="DELIVERY">DELIVERY</option>
+          </select>
 
-      <select name="producttype" value={form.producttype} onChange={handleChange} title="Product Type">
-        <option value="INTRADAY">INTRADAY</option>
-        <option value="DELIVERY">DELIVERY</option>
-      </select>
+          <select
+            name="duration"
+            value={form.duration}
+            onChange={handleChange}
+            className="w-full border rounded px-2 py-1 text-sm"
+          >
+            <option value="DAY">DAY</option>
+            <option value="IOC">IOC</option>
+          </select>
+        </div>
+      </div>
 
-      <select name="duration" value={form.duration} onChange={handleChange} title="Duration">
-        <option value="DAY">DAY</option>
-        <option value="IOC">IOC</option>
-      </select>
-
-      {!['MARKET'].includes(form.ordertype) && (
-        <Input name="price" placeholder="Price (for LIMIT/SL)" onChange={handleChange} title="Price" />
+      {/* Row 2: Conditional Quantity/Price/StopLoss */}
+      {form.ordertype === 'MARKET' && (
+        <div className="grid grid-cols-1 gap-2 mb-2">
+          <Input name="quantity" placeholder="Quantity" type="number" onChange={handleChange} />
+        </div>
       )}
 
-      <Input name="quantity" placeholder="Quantity" type="number" onChange={handleChange} title="Quantity" />
-
-      {(form.ordertype === 'SL' || form.ordertype === 'ROBO') && (
-        <Input name="stoploss" placeholder="Stop Loss (SL/ROBO)" onChange={handleChange} title="Stop Loss" />
+      {form.ordertype === 'LIMIT' && (
+        <div className="col-span-2">
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <Input name="quantity" placeholder="Quantity" type="number" onChange={handleChange} />
+            <Input name="price" placeholder="Price" onChange={handleChange} />
+          </div>
+        </div>
       )}
+
+      {form.ordertype === 'SL' && (
+        <div className="grid grid-cols-3 gap-2 mb-2 col-span-2">
+          <Input
+            name="stoploss"
+            placeholder="Stop Loss"
+            onChange={handleChange}
+            className="w-full"
+          />
+          <Input
+            name="quantity"
+            placeholder="Quantity"
+            type="number"
+            onChange={handleChange}
+            className="w-full"
+          />
+          <Input
+            name="price"
+            placeholder="Price"
+            onChange={handleChange}
+            className="w-full"
+          />
+        </div>
+      )}
+
 
       {form.ordertype === 'ROBO' && (
-        <Input name="squareoff" placeholder="Square Off (ROBO)" onChange={handleChange} title="Square Off" />
+        <>
+          <Input name="stoploss" placeholder="Stop Loss" onChange={handleChange} />
+          <Input name="squareoff" placeholder="Square Off" onChange={handleChange} />
+        </>
       )}
 
       <div className="col-span-2 flex items-center gap-4">

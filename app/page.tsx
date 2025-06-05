@@ -55,7 +55,8 @@ export default function Page() {
 
       {/* Left Panel (Full Height) */}
       {showOrderPanel && (
-        <div className="w-[300px] flex flex-col p-4 bg-white shadow-xl relative transition-transform duration-300">
+        <div className="w-[320px] flex flex-col p-4 bg-white shadow-xl relative border-r space-y-4">
+          <h2 className="text-md font-semibold text-gray-800">Place Order</h2>
           <div className="flex-1 overflow-y-auto">
             <OrderForm
               form={form}
@@ -63,24 +64,6 @@ export default function Page() {
               setResponseLog={setResponseLog}
               setModal={setModal}
             />
-            <div className="mt-4 flex flex-col gap-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={form.trailing_sl}
-                  onChange={(e) => setForm(prev => ({ ...prev, trailing_sl: e.target.checked }))}
-                />
-                Trailing SL
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={form.is_exit}
-                  onChange={(e) => setForm(prev => ({ ...prev, is_exit: e.target.checked }))}
-                />
-                Exit Order
-              </label>
-            </div>
           </div>
           <div className="sticky bottom-0 left-0 bg-white border-t p-4">
             <button
@@ -95,7 +78,7 @@ export default function Page() {
           </div>
           <button
             onClick={() => setShowOrderPanel(false)}
-            className="absolute top-4 right-[-16px] bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300 hover:scale-105"
+            className="absolute top-24 right-[-16px] bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300 hover:scale-105"
             title="Hide panel"
           >
             ◀
@@ -116,27 +99,29 @@ export default function Page() {
       {/* Right Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <div className="w-full flex justify-between items-center p-4 bg-white shadow z-10">
+        <div className="w-full flex justify-between items-center p-4 bg-white shadow z-10 relative">
           <h1 className="text-lg font-semibold">Algomin</h1>
           <button
             onClick={() => setShowSettings(true)}
             title="Settings"
             className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200"
           >
-            <img src="/settings.png" alt="Settings" className="w-6 h-6" />
+            <img src="settings.png" alt="Settings" className="w-6 h-6" />
           </button>
         </div>
 
         {/* Live Chart Panel */}
         <div className="w-full p-4 relative">
           {showLiveDataPanel && (
-            form.tradingsymbol && form.symboltoken ? (
-              <LiveDataPanel symbol={form.tradingsymbol} broker={form.broker} />
-            ) : (
-              <div className="w-full h-96 flex items-center justify-center bg-white border rounded shadow">
-                <img src="/placeholder-chart.png" alt="No symbol selected" className="opacity-40" />
-              </div>
-            )
+            <div className="w-full min-h-[384px] bg-white border rounded shadow relative">
+              {form.tradingsymbol ? (
+                <LiveDataPanel symbol={form.tradingsymbol} broker={form.broker} />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <img src="placeholder_chart.png" alt="No symbol selected" className="opacity-40" />
+                </div>
+              )}
+            </div>
           )}
 
           <button
@@ -150,7 +135,7 @@ export default function Page() {
 
         {/* Strategy Builder Panel */}
         <div className="w-full px-4">
-          <StrategyBuilderPanel />
+          <StrategyBuilderPanel minRules={2} />
         </div>
 
         {/* Response Log */}

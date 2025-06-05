@@ -50,7 +50,10 @@ export default function SymbolSelect({ value, onChange, error }: SymbolSelectPro
 
   return (
     <div className="flex flex-col relative">
-      <label className="col-span-2 flex gap-1">Select Trading Symbol</label>
+      <label className="font-medium text-gray-700 whitespace-nowrap">
+        Select Trading Symbol
+      </label>
+
       <Input
         value={search}
         onChange={handleChange}
