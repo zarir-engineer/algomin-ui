@@ -37,6 +37,7 @@ export default function Page() {
   const [showSettings, setShowSettings] = useState(false);
   const [responseLog, setResponseLog] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [useDummyTicks, setUseDummyTicks] = useState(false);
 
   const handleCopyLog = () => {
     navigator.clipboard.writeText(JSON.stringify(responseLog, null, 2));
@@ -50,42 +51,45 @@ export default function Page() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-row h-screen w-full bg-gray-100">
       <Toaster position="top-right" />
 
       {/* Left Panel (Full Height) */}
-      {showOrderPanel && (
-        <div className="w-[320px] flex flex-col p-4 bg-white shadow-xl relative border-r space-y-4">
-          <h2 className="text-md font-semibold text-gray-800">Place Order</h2>
-          <div className="flex-1 overflow-y-auto">
-            <OrderForm
-              form={form}
-              setForm={setForm}
-              setResponseLog={setResponseLog}
-              setModal={setModal}
-            />
-          </div>
-          <div className="sticky bottom-0 left-0 bg-white border-t p-4">
+      <div className={`flex flex-col min-w-[320px] max-w-[320px] bg-white shadow-xl border-r
+                       transition-transform duration-500 ease-in-out
+                       ${showOrderPanel ? 'translate-x-0' : '-translate-x-full'}`}>
+        {showOrderPanel && (
+          <div className="flex-1 flex flex-col p-4 space-y-4 overflow-hidden">
+            <h2 className="text-md font-semibold text-gray-800">Place Order</h2>
+            <div className="flex-1 overflow-y-auto">
+              <OrderForm
+                form={form}
+                setForm={setForm}
+                setResponseLog={setResponseLog}
+                setModal={setModal}
+              />
+            </div>
+            <div className="sticky bottom-0 left-0 bg-white border-t p-4">
+              <button
+                disabled={!form.tradingsymbol || !form.symboltoken || !form.quantity}
+                className="w-full py-2 rounded transition-all duration-300 text-white font-semibold
+                  disabled:bg-gray-400 disabled:cursor-not-allowed
+                  enabled:bg-black enabled:hover:bg-gray-800"
+                onClick={handleSubmitOrder}
+              >
+                Submit Order
+              </button>
+            </div>
             <button
-              disabled={!form.tradingsymbol || !form.symboltoken || !form.quantity}
-              className="w-full py-2 rounded transition-all duration-300 text-white font-semibold
-                disabled:bg-gray-400 disabled:cursor-not-allowed
-                enabled:bg-black enabled:hover:bg-gray-800"
-              onClick={handleSubmitOrder}
+              onClick={() => setShowOrderPanel(false)}
+              className="absolute top-24 right-[-16px] bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300 hover:scale-105"
+              title="Hide panel"
             >
-              Submit Order
+              ◀
             </button>
           </div>
-          <button
-            onClick={() => setShowOrderPanel(false)}
-            className="absolute top-24 right-[-16px] bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300 hover:scale-105"
-            title="Hide panel"
-          >
-            ◀
-          </button>
-        </div>
-      )}
-
+        )}
+      </div>
       {!showOrderPanel && (
         <button
           onClick={() => setShowOrderPanel(true)}
@@ -99,7 +103,7 @@ export default function Page() {
       {/* Right Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <div className="w-full flex justify-between items-center p-4 bg-white shadow z-10 relative">
+        <div className="ml-[18px] w-[calc(100%-35px)] flex justify-between items-center p-4 bg-white shadow z-10 relative">
           <h1 className="text-lg font-semibold">Algomin</h1>
           <button
             onClick={() => setShowSettings(true)}
@@ -115,7 +119,12 @@ export default function Page() {
           {showLiveDataPanel && (
             <div className="w-full min-h-[384px] bg-white border rounded shadow relative">
               {form.tradingsymbol ? (
-                <LiveDataPanel symbol={form.tradingsymbol} broker={form.broker} />
+                <LiveDataPanel
+                  symbol={form.tradingsymbol}
+                  broker={form.broker}
+                  useDummy={useDummyTicks}
+                />
+
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <img src="placeholder_chart.png" alt="No symbol selected" className="opacity-40" />
@@ -153,7 +162,18 @@ export default function Page() {
           </div>
         )}
       </div>
-
+        {showSettings && (
+          <div className="p-4 bg-gray-50 border-b text-sm text-gray-700 flex items-center gap-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={useDummyTicks}
+                onChange={(e) => setUseDummyTicks(e.target.checked)}
+              />
+              Use Dummy Ticks
+            </label>
+          </div>
+        )}
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
@@ -168,6 +188,14 @@ export default function Page() {
               <option value="angel_one">AngelOne</option>
               <option value="zerodha">Zerodha</option>
             </select>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={useDummyTicks}
+                onChange={(e) => setUseDummyTicks(e.target.checked)}
+              />
+              Use Dummy Ticks
+            </label>
             <div className="flex justify-end">
               <button
                 onClick={() => setShowSettings(false)}

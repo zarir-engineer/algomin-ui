@@ -1,4 +1,3 @@
-// components/StrategyBuilderPanel.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -53,12 +52,12 @@ export default function StrategyBuilderPanel({ minRules = 2 }: StrategyBuilderPr
 
   return (
     <div className="mt-4 p-4 bg-white border rounded shadow">
-      <h3 className="text-md font-semibold text-gray-800 mb-2">Conditions</h3>
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">Strategy Builder</h3>
       <div className="flex flex-col gap-2">
         {rules.map((rule, index) => (
           <div key={index} className="flex items-center gap-2">
             <select
-              className="text-sm px-2 py-1 border rounded"
+              className="text-sm border rounded px-2 py-1 w-[120px]"
               value={rule.indicator}
               onChange={(e) => updateRule(index, 'indicator', e.target.value)}
             >
@@ -69,7 +68,7 @@ export default function StrategyBuilderPanel({ minRules = 2 }: StrategyBuilderPr
             </select>
 
             <select
-              className="text-sm px-2 py-1 border rounded"
+              className="text-sm border rounded px-2 py-1 w-[100px]"
               value={rule.operator}
               onChange={(e) => updateRule(index, 'operator', e.target.value)}
             >
@@ -80,7 +79,7 @@ export default function StrategyBuilderPanel({ minRules = 2 }: StrategyBuilderPr
             </select>
 
             <select
-              className="text-sm px-2 py-1 border rounded"
+              className="text-sm border rounded px-2 py-1 w-[120px]"
               value={rule.field}
               onChange={(e) => updateRule(index, 'field', e.target.value)}
             >
@@ -93,30 +92,36 @@ export default function StrategyBuilderPanel({ minRules = 2 }: StrategyBuilderPr
             <input
               type="text"
               placeholder="Value"
-              className="text-sm px-2 py-1 border rounded w-24"
+              className="text-sm border rounded px-2 py-1 w-[100px]"
               value={rule.value}
               onChange={(e) => updateRule(index, 'value', e.target.value)}
             />
 
-            {rules.length > minRules && (
+            {/* Show minus icon if more than minRules */}
+            {index >= minRules && (
               <button
+                type="button"
                 onClick={() => removeRule(index)}
-                className="text-xl text-red-500 hover:text-red-700"
-                title="Remove condition"
+                className="text-xl text-red-500 hover:text-red-700 px-2"
+                title="Remove"
               >
-                &minus;
+                <img src="/minus.png" alt="Minus" className="w-5 h-5" />
+              </button>
+            )}
+
+            {/* Show plus icon only on the last row */}
+            {index === rules.length - 1 && (
+              <button
+                type="button"
+                onClick={addRule}
+                title="Add condition"
+                className="hover:scale-105 transition-transform"
+              >
+                <img src="/plus.png" alt="Add" className="w-5 h-5" />
               </button>
             )}
           </div>
         ))}
-        <div>
-          <button
-            onClick={addRule}
-            className="mt-2 text-sm text-blue-600 hover:underline"
-          >
-            + Add Another Condition
-          </button>
-        </div>
       </div>
     </div>
   );
