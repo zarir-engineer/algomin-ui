@@ -32,9 +32,12 @@ export default function useLiveTicks(symbol: string, broker: string) {
     };
 
     return () => {
-      socket.send(JSON.stringify({ action: 'unsubscribe', symbol }));
-      socket.close();
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ action: 'unsubscribe', symbol }));
+        socket.close();
+      }
     };
+
   }, [symbol, broker]);
 
   return tick;

@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef, useState } from "react";
 import useLiveTicks from "@/hooks/useLiveTicks";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";

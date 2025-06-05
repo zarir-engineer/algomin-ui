@@ -76,6 +76,28 @@ export default function OrderForm({ form, setForm, setResponseLog, setModal }: P
 
   return (
     <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+      <div className="col-span-2 flex gap-2" title="Exchange">
+        {['NSE', 'BSE'].map(ex => (
+          <label key={ex} className="inline-flex items-center">
+            <input type="radio" name="exchange" value={ex} checked={form.exchange === ex} onChange={handleChange} />
+            <span className="ml-2">{ex}</span>
+          </label>
+        ))}
+      </div>
+
+      <div className="flex gap-2 col-span-2" title="Order Type">
+        {['MARKET', 'LIMIT', 'SL', 'SL-M'].map((type) => (
+          <button
+            key={type}
+            type="button"
+            className={`px-3 py-1 rounded-full text-sm font-medium ${form.ordertype === type ? 'bg-black text-white' : 'bg-gray-100 text-gray-800'}`}
+            onClick={() => setForm({ ...form, ordertype: type })}
+          >
+            {type}
+          </button>
+        ))}
+      </div>
+
       <SymbolSelect
         value={{ symbol: form.tradingsymbol, token: form.symboltoken }}
         onChange={({ symbol, token }) => setForm(prev => ({ ...prev, tradingsymbol: symbol, symboltoken: token }))}
@@ -98,28 +120,6 @@ export default function OrderForm({ form, setForm, setResponseLog, setModal }: P
             />
             <span>{type}</span>
           </label>
-        ))}
-      </div>
-
-      <div className="flex gap-4" title="Exchange">
-        {['NSE', 'BSE'].map(ex => (
-          <label key={ex} className="inline-flex items-center">
-            <input type="radio" name="exchange" value={ex} checked={form.exchange === ex} onChange={handleChange} />
-            <span className="ml-2">{ex}</span>
-          </label>
-        ))}
-      </div>
-
-      <div className="flex gap-2 col-span-2" title="Order Type">
-        {['MARKET', 'LIMIT', 'SL', 'SL-M'].map((type) => (
-          <button
-            key={type}
-            type="button"
-            className={`px-3 py-1 rounded-full text-sm font-medium ${form.ordertype === type ? 'bg-black text-white' : 'bg-gray-100 text-gray-800'}`}
-            onClick={() => setForm({ ...form, ordertype: type })}
-          >
-            {type}
-          </button>
         ))}
       </div>
 
@@ -161,8 +161,6 @@ export default function OrderForm({ form, setForm, setResponseLog, setModal }: P
           <input type="checkbox" name="is_exit" checked={form.is_exit} onChange={handleChange} /> Exit Order
         </label>
       </div>
-
-      <Button className="col-span-2" type="submit">Submit Order</Button>
     </form>
   );
 }
