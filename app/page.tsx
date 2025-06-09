@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import OrderForm from '@/components/OrderForm';
 import LiveDataPanel from '@/components/LiveDataPanel';
 import StrategyBuilderPanel from '@/components/StrategyBuilderPanel';
+import { useSettings } from '@/context/SettingsContext';
 
 export default function Page() {
   const [form, setForm] = useState({
