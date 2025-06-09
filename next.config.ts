@@ -11,12 +11,12 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              // allow WebSocket connections to your API hosts
-              "connect-src 'self' ws://127.0.0.1:8000 wss://algomin-ui-production.up.railway.app",
-              "script-src 'self'",
+              "connect-src 'self' ws://127.0.0.1:46630 https://algomin-symbols-fetcher-production.up.railway.app",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
-            ].join('; '),
-          },
+              "img-src 'self'",
+            ].join('; ')
+          }
         ],
       },
     ];

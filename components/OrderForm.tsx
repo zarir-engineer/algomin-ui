@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SymbolSelect from "@/components/SymbolSelect";
+import Dashboard from "@/components/Dashboard";
 
 type OrderFormData = {
   tradingsymbol: string;
@@ -97,10 +98,11 @@ export default function OrderForm({ form, setForm, setResponseLog, setModal }: P
           </button>
         ))}
       </div>
-
-      <SymbolSelect
+      <Dashboard
         value={{ symbol: form.tradingsymbol, token: form.symboltoken }}
-        onChange={({ symbol, token }) => setForm(prev => ({ ...prev, tradingsymbol: symbol, symboltoken: token }))}
+        onChange={({ symbol, token }) =>
+          setForm(prev => ({ ...prev, tradingsymbol: symbol, symboltoken: token }))
+        }
       />
       {form.symboltoken && (
         <div className="col-span-2 text-xs text-gray-500 ml-1 ">
