@@ -1,13 +1,15 @@
-// app/page.tsx
+// 1. Mark this as a client component
 'use client';
 
-import { useState } from 'react';
+// 2. Imports
+import React, { useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
-import { Button } from '@/components/ui/button';
+import { SettingsProvider } from '@/context/SettingsContext';       // ← new
+import SettingsModal from '@/components/SettingsModal';             // ← new
 import OrderForm from '@/components/OrderForm';
 import LiveDataPanel from '@/components/LiveDataPanel';
 import StrategyBuilderPanel from '@/components/StrategyBuilderPanel';
-import { useSettings } from '@/context/SettingsContext';
+
 
 export default function Page() {
   const [form, setForm] = useState({
@@ -38,7 +40,6 @@ export default function Page() {
   const [showSettings, setShowSettings] = useState(false);
   const [responseLog, setResponseLog] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [useDummyTicks, setUseDummyTicks] = useState(false);
 
   const handleCopyLog = () => {
     navigator.clipboard.writeText(JSON.stringify(responseLog, null, 2));
@@ -52,44 +53,44 @@ export default function Page() {
   };
 
   return (
-    <div className="flex flex-row h-screen w-full bg-gray-100">
+    <SettingsProvider>
       <Toaster position="top-right" />
-
-      {/* Left Panel (Full Height) */}
-      <div className={`flex flex-col min-w-[320px] max-w-[320px] bg-white shadow-xl border-r
-                       transition-transform duration-500 ease-in-out
+        {/* A) Left “Place Order” panel */}
+        <div className="flex flex-row h-screen w-full bg-gray-100">
+          {/* Left Panel (Full Height) */}
+          <div className={`flex flex-col min-w-[320px] max-w-[320px] bg-white shadow-xl border-r transition-transform duration-500 ease-in-out
                        ${showOrderPanel ? 'translate-x-0' : '-translate-x-full'}`}>
-        {showOrderPanel && (
-          <div className="flex-1 flex flex-col p-4 space-y-4 overflow-hidden">
-            <h2 className="text-md font-semibold text-gray-800">Place Order</h2>
-            <div className="flex-1 overflow-y-auto">
-              <OrderForm
-                form={form}
-                setForm={setForm}
-                setResponseLog={setResponseLog}
-                setModal={setModal}
-              />
-            </div>
-            <div className="sticky bottom-0 left-0 bg-white border-t p-4">
-              <button
-                disabled={!form.tradingsymbol || !form.symboltoken || !form.quantity}
-                className="w-full py-2 rounded transition-all duration-300 text-white font-semibold
-                  disabled:bg-gray-400 disabled:cursor-not-allowed
-                  enabled:bg-black enabled:hover:bg-gray-800"
-                onClick={handleSubmitOrder}
-              >
-                Submit Order
-              </button>
-            </div>
-            <button
-              onClick={() => setShowOrderPanel(false)}
-              className="absolute top-24 right-[-16px] bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300 hover:scale-105"
-              title="Hide panel"
-            >
-              ◀
-            </button>
-          </div>
-        )}
+            {showOrderPanel && (
+              <div className="flex-1 flex flex-col p-4 space-y-4 overflow-hidden">
+                <h2 className="text-md font-semibold text-gray-800">Place Order</h2>
+                <div className="flex-1 overflow-y-auto">
+                  <OrderForm
+                    form={form}
+                    setForm={setForm}
+                    setResponseLog={setResponseLog}
+                    setModal={setModal}
+                  />
+                </div>
+                <div className="sticky bottom-0 left-0 bg-white border-t p-4">
+                  <button
+                    disabled={!form.tradingsymbol || !form.symboltoken || !form.quantity}
+                    className="w-full py-2 rounded transition-all duration-300 text-white font-semibold
+                      disabled:bg-gray-400 disabled:cursor-not-allowed
+                      enabled:bg-black enabled:hover:bg-gray-800"
+                    onClick={handleSubmitOrder}
+                  >
+                    Submit Order
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowOrderPanel(false)}
+                  className="absolute top-24 right-[-16px] bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300 hover:scale-105"
+                  title="Hide panel"
+                >
+                  ◀
+                </button>
+              </div>
+            )}
       </div>
       {!showOrderPanel && (
         <button
@@ -103,7 +104,7 @@ export default function Page() {
 
       {/* Right Content Area */}
       <div className="flex-1 flex flex-col">
-        {/* Top Bar */}
+        {/* B1) Top bar with “Algomin” title + Settings button */}
         <div className="ml-[18px] w-[calc(100%-35px)] flex justify-between items-center p-4 bg-white shadow z-10 relative">
           <h1 className="text-lg font-semibold">Algomin</h1>
           <button
@@ -122,25 +123,23 @@ export default function Page() {
               {form.tradingsymbol ? (
                 <LiveDataPanel
                   symbol={form.tradingsymbol}
-                  broker={form.broker}
-                  useDummy={useDummyTicks}
-                />
-
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <img src="placeholder_chart.png" alt="No symbol selected" className="opacity-40" />
-                </div>
-              )}
+                  broker={ /* get from context instead of form.broker */ }
+                  useDummy={ /* get from context */ }
+                /> :
+                  <div className="w-full h-full flex items-center justify-center">
+                    <img src="placeholder_chart.png" alt="No symbol selected" className="opacity-40" />
+                  </div>
+               ) : null }
+              {/* toggle “▲/▼” button */}
+              <button
+                onClick={() => setShowLiveDataPanel(!showLiveDataPanel)}
+                className="absolute top-4 right-4 bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300"
+                title={showLiveDataPanel ? 'Hide chart' : 'Show chart'}
+              >
+                {showLiveDataPanel ? '▲' : '▼'}
+              </button>
             </div>
           )}
-
-          <button
-            onClick={() => setShowLiveDataPanel(!showLiveDataPanel)}
-            className="absolute top-4 right-4 bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300"
-            title={showLiveDataPanel ? 'Hide chart' : 'Show chart'}
-          >
-            {showLiveDataPanel ? '▲' : '▼'}
-          </button>
         </div>
 
         {/* Strategy Builder Panel */}
@@ -163,69 +162,12 @@ export default function Page() {
           </div>
         )}
       </div>
-        {showSettings && (
-          <div className="p-4 bg-gray-50 border-b text-sm text-gray-700 flex items-center gap-2">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={useDummyTicks}
-                onChange={(e) => setUseDummyTicks(e.target.checked)}
-              />
-              Use Dummy Ticks
-            </label>
-          </div>
-        )}
-      {/* Settings Modal */}
       {showSettings && (
-        <div className="fixed inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
-            <h2 className="text-lg font-semibold mb-4">Settings</h2>
-            <label className="block text-sm mb-1">Select Broker</label>
-            <select
-              value={form.broker}
-              onChange={(e) => setForm(prev => ({ ...prev, broker: e.target.value }))}
-              className="w-full border rounded px-2 py-1 mb-4"
-            >
-              <option value="angel_one">AngelOne</option>
-              <option value="zerodha">Zerodha</option>
-            </select>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={useDummyTicks}
-                onChange={(e) => setUseDummyTicks(e.target.checked)}
-              />
-              Use Dummy Ticks
-            </label>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowSettings(false)}
-                className="px-4 py-2 bg-black text-white rounded"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <SettingsModal
+          open={showSettings}
+          onClose={() => setShowSettings(false)}
+        />
       )}
-
-      {/* Generic Modal */}
-      {modal.open && (
-        <div className="fixed inset-0 z-50 bg-white/20 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-            <h2 className="text-xl font-semibold mb-2">{modal.title}</h2>
-            <p className="text-gray-700 text-sm whitespace-pre-wrap max-h-64 overflow-auto">
-              {modal.content}
-            </p>
-            <button
-              className="mt-4 px-4 py-2 bg-black text-white rounded"
-              onClick={() => setModal({ open: false, title: '', content: '' })}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+    </SettingsProvider>
   );
 }
