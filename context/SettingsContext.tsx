@@ -1,5 +1,6 @@
 // SettingsContext.tsx: Provides shared user settings (dummy ticks and broker choice) via React context.
 // UI for settings (e.g., SettingsModal) should live in a separate component that consumes this context.
+'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 

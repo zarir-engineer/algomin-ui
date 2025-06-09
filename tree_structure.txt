@@ -6,21 +6,40 @@
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components
+│   ├── Dashboard.tsx
+│   ├── DummyTickPanel.tsx
 │   ├── LiveDataPanel.tsx
 │   ├── LiveIndicatorPanel.tsx
+│   ├── LiveTickPanel.tsx
 │   ├── OrderForm.tsx
+│   ├── StrategyBuilderPanel.tsx
 │   ├── SymbolSelect.tsx
 │   └── ui
 │       ├── button.tsx
+│       ├── Card.tsx
+│       ├── index.ts
 │       ├── input.tsx
-│       └── select.tsx
+│       ├── select.tsx
+│       └── Table.tsx
 ├── components.json
+├── context
+│   ├── SettingsContext.tsx
+│   └── SettingsModal.tsx
 ├── hooks
 │   └── useLiveTicks.tsx
 ├── lib
 │   └── utils.ts
 ├── misc
-│   └── algomin-ui.png
+│   ├── algomin-sb-02.png
+│   ├── algomin-sb.png
+│   ├── algomin-ui-look-02.png
+│   ├── algomin-ui-look-03.png
+│   ├── algomin-ui-look-04.png
+│   ├── algomin-ui.png
+│   ├── minus.png
+│   ├── plus-minus.png
+│   ├── plus.png
+│   └── problem-with-animation.png
 ├── next.config.ts
 ├── next-env.d.ts
 ├── package.json
@@ -29,7 +48,12 @@
 ├── public
 │   ├── file.svg
 │   ├── globe.svg
+│   ├── index.html
+│   ├── minus.png
 │   ├── next.svg
+│   ├── placeholder_chart.png
+│   ├── plus.png
+│   ├── settings.png
 │   ├── vercel.svg
 │   └── window.svg
 ├── README.md
@@ -38,4 +62,4 @@
 ├── tree_structure.txt
 └── tsconfig.json
 
-7 directories, 31 files
+8 directories, 54 files

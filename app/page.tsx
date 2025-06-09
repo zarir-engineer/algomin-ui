@@ -4,8 +4,8 @@
 // 2. Imports
 import React, { useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
-import { SettingsProvider } from '@/context/SettingsContext';       // ← new
-import SettingsModal from '@/components/SettingsModal';             // ← new
+import { useSettings } from '@/context/SettingsContext';
+import SettingsModal from '@/components/SettingsModal';
 import OrderForm from '@/components/OrderForm';
 import LiveDataPanel from '@/components/LiveDataPanel';
 import StrategyBuilderPanel from '@/components/StrategyBuilderPanel';
@@ -27,7 +27,6 @@ export default function Page() {
     squareoff: '',
     trailing_sl: false,
     is_exit: false,
-    broker: 'angel_one',
   });
 
   const [modal, setModal] = useState<{ open: boolean; title: string; content: string }>({
@@ -40,6 +39,7 @@ export default function Page() {
   const [showSettings, setShowSettings] = useState(false);
   const [responseLog, setResponseLog] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const { broker, useDummyTicks } = useSettings();
 
   const handleCopyLog = () => {
     navigator.clipboard.writeText(JSON.stringify(responseLog, null, 2));
@@ -53,11 +53,9 @@ export default function Page() {
   };
 
   return (
-    <SettingsProvider>
+    <>
       <Toaster position="top-right" />
-        {/* A) Left “Place Order” panel */}
         <div className="flex flex-row h-screen w-full bg-gray-100">
-          {/* Left Panel (Full Height) */}
           <div className={`flex flex-col min-w-[320px] max-w-[320px] bg-white shadow-xl border-r transition-transform duration-500 ease-in-out
                        ${showOrderPanel ? 'translate-x-0' : '-translate-x-full'}`}>
             {showOrderPanel && (
@@ -91,83 +89,85 @@ export default function Page() {
                 </button>
               </div>
             )}
-      </div>
-      {!showOrderPanel && (
-        <button
-          onClick={() => setShowOrderPanel(true)}
-          className="fixed top-24 left-0 bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center z-10 transition-transform duration-300 hover:scale-105"
-          title="Show panel"
-        >
-          ▶
-        </button>
-      )}
-
-      {/* Right Content Area */}
-      <div className="flex-1 flex flex-col">
-        {/* B1) Top bar with “Algomin” title + Settings button */}
-        <div className="ml-[18px] w-[calc(100%-35px)] flex justify-between items-center p-4 bg-white shadow z-10 relative">
-          <h1 className="text-lg font-semibold">Algomin</h1>
-          <button
-            onClick={() => setShowSettings(true)}
-            title="Settings"
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200"
-          >
-            <img src="settings.png" alt="Settings" className="w-6 h-6" />
-          </button>
+          </div>
         </div>
+        {!showOrderPanel && (
+          <button
+            onClick={() => setShowOrderPanel(true)}
+            className="fixed top-24 left-0 bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center z-10 transition-transform duration-300 hover:scale-105"
+            title="Show panel"
+          >
+            ▶
+          </button>
+        )}
 
-        {/* Live Chart Panel */}
-        <div className="w-full p-4 relative">
-          {showLiveDataPanel && (
-            <div className="w-full min-h-[384px] bg-white border rounded shadow relative">
-              {form.tradingsymbol ? (
-                <LiveDataPanel
-                  symbol={form.tradingsymbol}
-                  broker={ /* get from context instead of form.broker */ }
-                  useDummy={ /* get from context */ }
-                /> :
+        {/* Right Content Area */}
+        <div className="flex-1 flex flex-col">
+          {/* B1) Top bar with “Algomin” title + Settings button */}
+          <div className="ml-[18px] w-[calc(100%-35px)] flex justify-between items-center p-4 bg-white shadow z-10 relative">
+            <h1 className="text-lg font-semibold">Algomin</h1>
+            <button
+              onClick={() => setShowSettings(true)}
+              title="Settings"
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200"
+            >
+              <img src="settings.png" alt="Settings" className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Live Chart Panel */}
+          <div className="w-full p-4 relative">
+            {showLiveDataPanel && (
+              <div className="w-full min-h-[384px] bg-white border rounded shadow relative">
+                {form.tradingsymbol ? (
+                  <LiveDataPanel
+                    symbol={form.tradingsymbol}
+                    broker={broker}
+                    useDummy={useDummyTicks}
+                  />
+                ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <img src="placeholder_chart.png" alt="No symbol selected" className="opacity-40" />
                   </div>
-               ) : null }
-              {/* toggle “▲/▼” button */}
-              <button
-                onClick={() => setShowLiveDataPanel(!showLiveDataPanel)}
-                className="absolute top-4 right-4 bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300"
-                title={showLiveDataPanel ? 'Hide chart' : 'Show chart'}
-              >
-                {showLiveDataPanel ? '▲' : '▼'}
-              </button>
+                 ) : null }
+                {/* toggle “▲/▼” button */}
+                <button
+                  onClick={() => setShowLiveDataPanel(!showLiveDataPanel)}
+                  className="absolute top-4 right-4 bg-white border shadow rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300"
+                  title={showLiveDataPanel ? 'Hide chart' : 'Show chart'}
+                >
+                  {showLiveDataPanel ? '▲' : '▼'}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Strategy Builder Panel */}
+          <div className="w-full px-4">
+            <StrategyBuilderPanel minRules={2} />
+          </div>
+
+          {/* Response Log */}
+          {responseLog && (
+            <div className="p-4">
+              <div className="mt-6 bg-gray-100 border rounded p-3 text-xs relative max-h-64 overflow-auto">
+                <button
+                  onClick={handleCopyLog}
+                  className="absolute top-2 right-2 text-xs text-gray-400 hover:text-black"
+                >
+                  {copied ? '✓ Copied' : 'Copy'}
+                </button>
+                <pre className="whitespace-pre-wrap break-words">{JSON.stringify(responseLog, null, 2)}</pre>
+              </div>
             </div>
           )}
         </div>
-
-        {/* Strategy Builder Panel */}
-        <div className="w-full px-4">
-          <StrategyBuilderPanel minRules={2} />
-        </div>
-
-        {/* Response Log */}
-        {responseLog && (
-          <div className="p-4">
-            <div className="mt-6 bg-gray-100 border rounded p-3 text-xs relative max-h-64 overflow-auto">
-              <button
-                onClick={handleCopyLog}
-                className="absolute top-2 right-2 text-xs text-gray-400 hover:text-black"
-              >
-                {copied ? '✓ Copied' : 'Copy'}
-              </button>
-              <pre className="whitespace-pre-wrap break-words">{JSON.stringify(responseLog, null, 2)}</pre>
-            </div>
-          </div>
+        {showSettings && (
+          <SettingsModal
+            open={showSettings}
+            onClose={() => setShowSettings(false)}
+          />
         )}
-      </div>
-      {showSettings && (
-        <SettingsModal
-          open={showSettings}
-          onClose={() => setShowSettings(false)}
-        />
-      )}
-    </SettingsProvider>
+    </>
   );
 }
