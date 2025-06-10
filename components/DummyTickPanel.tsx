@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Card, CardContent, CardHeader } from '@/components/ui';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
+import ChartPanel, { ChartPoint } from './ChartPanel';
 
 export interface DummyTickPanelProps {
   symbol: string;
@@ -59,12 +52,7 @@ export function DummyTickPanel({symbol, broker }: DummyTickPanelProps) {
 
           <div className="w-full h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={ticks}>
-                <XAxis dataKey="time" />
-                <YAxis domain={['auto','auto']} />
-                <Tooltip />
-                <Line dataKey="price" dot={false} />
-              </LineChart>
+              <ChartPanel data={ticks.map(t => ({ time: t.time, value: t.price }))} height={200} />
             </ResponsiveContainer>
           </div>
         </div>

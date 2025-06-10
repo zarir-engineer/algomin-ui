@@ -3,14 +3,8 @@ import React, { useEffect, useState } from 'react';
 import useLiveTicks from '@/hooks/useLiveTicks';
 // import { useSettings } from '@/context/SettingsContext'
 import { Table, Card, CardContent, CardHeader } from '@/components/ui';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
+import ChartPanel, { ChartPoint } from './ChartPanel';
+
 
 // 1️⃣ Define the props you expect from Dashboard
 export interface LiveTickPanelProps {
@@ -62,12 +56,7 @@ export function LiveTickPanel({
         </Table>
 
         <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={ticks}>
-            <XAxis dataKey="time" />
-            <YAxis />
-            <Tooltip />
-            <Line dataKey="price" dot={false} />
-          </LineChart>
+          <ChartPanel data={ticks.map(t => ({ time: t.time, value: t.price }))} height={200} />
         </ResponsiveContainer>
       </CardContent>
     </Card>
