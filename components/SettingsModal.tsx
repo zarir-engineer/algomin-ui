@@ -12,7 +12,8 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   const { broker, useDummyTicks, setBroker, setUseDummyTicks } = useSettings();
-  const [localBroker, setLocalBroker] = useState(broker);
+  // localBroker as string to accept any value
+  const [localBroker, setLocalBroker] = useState<string>(broker);
   const [localUseDummy, setLocalUseDummy] = useState(useDummyTicks);
 
   useEffect(() => {
@@ -57,7 +58,12 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         </div>
         <div className="mt-6 flex justify-end space-x-2">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => { setBroker(localBroker); setUseDummyTicks(localUseDummy); onClose(); }}>
+          <Button onClick={() => {
+            // cast localBroker to expected union type
+            setBroker(localBroker as 'angel_one' | 'zerodha');
+            setUseDummyTicks(localUseDummy);
+            onClose();
+          }}>
             Save
           </Button>
         </div>
