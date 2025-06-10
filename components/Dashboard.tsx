@@ -1,31 +1,38 @@
-import React from 'react';
-import { setHours, setMinutes, isBefore } from 'date-fns';
-import SymbolSelect from '@/components/SymbolSelect';
-import { LiveTickPanel, LiveTickPanelProps } from '@/components/LiveTickPanel';
-import { DummyTickPanel, DummyTickPanelProps } from '@/components/DummyTickPanel';
-import { useSettings } from '@/context/SettingsContext';
+import React, { useState } from 'react';
+import OrderForm from './OrderForm';
+import MarketDataPanel from './MarketDataPanel';
+import StrategyBuilderPanel from './StrategyBuilderPanel';
 
-// 1) Define the props shape
-export interface DashboardProps {
-  value: { symbol: string; token: string };
-  onChange: (v: { symbol: string; token: string }) => void;
-}
+export default function Dashboard() {
+  const [selection, setSelection] = useState<{ symbol: string; token: string }>({
+    symbol: '',
+    token: '',
+  });
 
-export function Dashboard({ value, onChange }: DashboardProps) {
-  const { useDummyTicks } = useSettings();
-  const { symbol, token } = value;
-
-  const handleSelect = (sel: { symbol: string; token: string }) => {
-    onChange(sel);
-  };
+  const { symbol, token } = selection;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <SymbolSelect
-        value={value}
-        onChange={handleSelect}
-        error={!token}
-      />
+    <div className="flex flex-col h-full">
+      {/* Top row: left (OrderForm) and right (MarketDataPanel) */}
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex-shrink-0 w-[320px] bg-white border-r overflow-auto">
+          <OrderForm selection={selection} onChange={setSelection} />
+        </div>
+        <div className="flex-1 p-4 bg-gray-50 overflow-auto">
+          {symbol && token ? (
+            <MarketDataPanel symbol={symbol} broker={token} />
+          ) : (
+            <div className="h-full flex items-center justify-center text-gray-400">
+              Select a symbol to view market data
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom panel: Strategy Builder */}
+      <div className="bg-white border-t p-4 overflow-auto">
+        <StrategyBuilderPanel minRules={2} />
+      </div>
     </div>
   );
 }
