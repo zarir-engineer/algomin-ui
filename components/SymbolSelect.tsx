@@ -1,15 +1,21 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 
-interface SymbolSelectProps {
+export interface SymbolSelectProps {
   value: { symbol: string; token: string };
   onChange: (val: { symbol: string; token: string }) => void;
+  placeholder: string;
   error?: boolean;
 }
 
-export default function SymbolSelect({ value, onChange, error }: SymbolSelectProps) {
+export default function SymbolSelect({
+  value,
+  onChange,
+  placeholder,
+  error = false,
+}: SymbolSelectProps) {
   const [symbols, setSymbols] = useState<{ symbol: string; token: string }[]>([]);
   const [search, setSearch] = useState("");
 
@@ -58,7 +64,7 @@ export default function SymbolSelect({ value, onChange, error }: SymbolSelectPro
         value={search}
         onChange={handleChange}
         list="symbol-list"
-        placeholder="Start typing symbol..."
+        placeholder={placeholder}
         className={error ? 'border-red-500' : ''}
       />
       <datalist id="symbol-list">
@@ -67,5 +73,5 @@ export default function SymbolSelect({ value, onChange, error }: SymbolSelectPro
         ))}
       </datalist>
     </div>
-  );
+);
 }

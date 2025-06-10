@@ -17,7 +17,7 @@ export default function LiveIndicatorPanel() {
     <div className="p-4 rounded-xl shadow bg-white space-y-4">
       <h2 className="text-lg font-semibold">📈 Live Market Panel</h2>
 
-      <SymbolSelect value={selectedSymbol} onChange={setSelectedSymbol} />
+      <SymbolSelect value={selectedSymbol} onChange={setSelectedSymbol} placeholder="Type to search"/>
 
       <div className="flex gap-4 flex-wrap">
         {Object.keys(indicators).map((key) => (

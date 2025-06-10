@@ -1,5 +1,5 @@
 import React from 'react';
-import { LiveDataPanel } from './LiveDataPanel';
+import LiveDataPanel from './LiveDataPanel';
 import { DummyTickPanel } from './DummyTickPanel';
 import { useSettings } from '@/context/SettingsContext';
 
