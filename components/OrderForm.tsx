@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SymbolSelect from "@/components/SymbolSelect";
-import Dashboard from "@/components/Dashboard";
+import { Dashboard } from "@/components/Dashboard";
 
 type OrderFormData = {
   tradingsymbol: string;

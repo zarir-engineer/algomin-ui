@@ -5,11 +5,11 @@
 import React, { useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import { useSettings } from '@/context/SettingsContext';
-import SettingsModal from '@/components/SettingsModal';
+// import { SettingsModal } from '@/components/SettingsModal';
 import OrderForm from '@/components/OrderForm';
 import LiveDataPanel from '@/components/LiveDataPanel';
 import StrategyBuilderPanel from '@/components/StrategyBuilderPanel';
-
+//
 
 export default function Page() {
   const [form, setForm] = useState({
@@ -27,6 +27,7 @@ export default function Page() {
     squareoff: '',
     trailing_sl: false,
     is_exit: false,
+    broker: 'angel_one'
   });
 
   const [modal, setModal] = useState<{ open: boolean; title: string; content: string }>({
@@ -39,7 +40,8 @@ export default function Page() {
   const [showSettings, setShowSettings] = useState(false);
   const [responseLog, setResponseLog] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const { broker, useDummyTicks } = useSettings();
+  const {broker, useDummyTicks} = useSettings();
+
 
   const handleCopyLog = () => {
     navigator.clipboard.writeText(JSON.stringify(responseLog, null, 2));
@@ -127,9 +129,14 @@ export default function Page() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <img src="placeholder_chart.png" alt="No symbol selected" className="opacity-40" />
+                    <img
+                      src="placeholder_chart.png"
+                      alt="No symbol selected"
+                      className="opacity-40"
+                    />
                   </div>
-                 ) : null }
+                )}
+
                 {/* toggle “▲/▼” button */}
                 <button
                   onClick={() => setShowLiveDataPanel(!showLiveDataPanel)}
@@ -141,7 +148,6 @@ export default function Page() {
               </div>
             )}
           </div>
-
           {/* Strategy Builder Panel */}
           <div className="w-full px-4">
             <StrategyBuilderPanel minRules={2} />
@@ -161,13 +167,8 @@ export default function Page() {
               </div>
             </div>
           )}
+
         </div>
-        {showSettings && (
-          <SettingsModal
-            open={showSettings}
-            onClose={() => setShowSettings(false)}
-          />
-        )}
     </>
   );
 }
