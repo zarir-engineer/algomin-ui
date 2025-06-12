@@ -40,7 +40,10 @@ export default function useLiveTicks(symbol: string, broker: string, useDummy = 
       return () => clearInterval(interval);
     }
 
-    const socket = new WebSocket(`wss://web-production-4e6e.up.railway.app/ws/stream?broker=${broker}`);
+    // qualify WebSocket as a window API so TS picks up the DOM type
+    const socket = new window.WebSocket(
+      `wss://web-production-4e6e.up.railway.app/ws/stream?broker=${broker}`
+    );
 
     socket.onopen = () => {
       socket.send(JSON.stringify({ action: 'subscribe', symbol }));

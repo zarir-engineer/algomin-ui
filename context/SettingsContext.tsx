@@ -3,6 +3,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { isMarketClosed } from '@/utils/market';
 
 interface SettingsContextType {
   /** Whether the app should use dummy tick data */
@@ -18,8 +19,8 @@ interface SettingsContextType {
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [useDummyTicks, setUseDummyTicks] = useState<boolean>(false);
   const [broker, setBroker] = useState<'angel_one' | 'zerodha'>('angel_one');
+  const [useDummyTicks, setUseDummyTicks] = useState(() => isMarketClosed());
 
   return (
     <SettingsContext.Provider value={{ useDummyTicks, setUseDummyTicks, broker, setBroker }}>

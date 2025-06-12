@@ -6,11 +6,14 @@ import { SettingsProvider } from '@/context/SettingsContext';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  preload: false,      // ← disable the rel="preload" tag
+
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false,      // ← disable the rel="preload" tag
 });
 
 export const metadata: Metadata = {

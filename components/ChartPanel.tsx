@@ -1,80 +1,56 @@
 // components/ChartPanel.tsx
 'use client';
 
-import React, { useRef, useEffect } from 'react';
-import { createChart, IChartApi, ISeriesApi, ColorType } from 'lightweight-charts';
+import React, { useState } from 'react';
+import { AdvancedChart } from 'react-tradingview-embed';
 
-
-export interface ChartPoint {
-  time: string;   // e.g. '2025-06-10' or UNIX timestamp
-  value: number;  // price or metric
-}
+export type SeriesType = 'Line' | 'Area' | 'Candlestick' | 'Bar';
 
 export interface ChartPanelProps {
-  data: ChartPoint[];
+  symbol: string; // e.g. "NASDAQ:AAPL" or "BTCUSD"
   height?: number;
 }
 
-export default function ChartPanel({ data, height = 300 }: ChartPanelProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<'Line'> | null>(null);
+// Map our SeriesType to TradingView style codes (must be strings)
+const styleMap: Record<SeriesType, string> = {
+  Line: '2',        // 2 = Line
+  Area: '3',        // 3 = Area
+  Candlestick: '1', // 1 = Candles
+  Bar: '0',         // 0 = Bars
+};
 
+const chartOptions: SeriesType[] = ['Line', 'Area', 'Candlestick', 'Bar'];
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-    chartRef.current = createChart(containerRef.current, {
-      width: containerRef.current.clientWidth,
-      height,
-      layout: {
-        background: { type: ColorType.Solid, color: '#ffffff' },
-        textColor: '#333',
-      },
-      grid: {
-        vertLines: { color: '#eee' },
-        horzLines: { color: '#eee' },
-      },
-      localization: {
-        dateFormat: 'HH:mm',
-      },
-      timeScale: {
-        borderColor: '#ccc',
-        rightOffset: 5,
-        fixLeftEdge: true,
-        lockVisibleTimeRangeOnResize: true,
-      },
-      rightPriceScale: {
-        borderColor: '#ccc',
-        mode: 1,
-      },
-    });
+export default function ChartPanel({ symbol, height = 400 }: ChartPanelProps) {
+  const [seriesType, setSeriesType] = useState<SeriesType>('Line');
 
-    seriesRef.current = chartRef.current.addSeries({
-      lineColor: '#1976d2',
-      lineWidth: 2,
-    });
-    seriesRef.current.setData(data.map(pt => ({ time: pt.time, value: pt.value })));
-    chartRef.current.timeScale().fitContent();
+  return (
+    <div style={{ height }}>
+      <div className="mb-2 flex items-center gap-2">
+        <label className="font-medium">Chart Type:</label>
+        <select
+          value={seriesType}
+          onChange={e => setSeriesType(e.target.value as SeriesType)}
+          className="border rounded px-2 py-1"
+        >
+          {chartOptions.map(opt => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      </div>
 
-    const handleResize = () => {
-      if (containerRef.current && chartRef.current) {
-        chartRef.current.applyOptions({ width: containerRef.current.clientWidth });
-      }
-    };
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      chartRef.current?.remove();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (seriesRef.current) {
-      seriesRef.current.setData(data.map(pt => ({ time: pt.time, value: pt.value })));
-      chartRef.current?.timeScale().fitContent();
-    }
-  }, [data]);
-
-  return <div ref={containerRef} />;
+      <AdvancedChart
+        widgetProps={{
+          symbol,
+          interval: "1",
+          theme: "dark",
+          style: styleMap[seriesType],
+          locale: "en",
+          autosize: true,
+        }}
+      />
+    </div>
+  );
 }

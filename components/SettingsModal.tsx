@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useSettings } from '@/context/SettingsContext';
+import { isMarketClosed } from '@/utils/market';
 
 interface SettingsModalProps {
   open: boolean;
@@ -15,6 +16,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   // localBroker as string to accept any value
   const [localBroker, setLocalBroker] = useState<string>(broker);
   const [localUseDummy, setLocalUseDummy] = useState(useDummyTicks);
+  const marketClosed = isMarketClosed();
 
   useEffect(() => {
     setLocalBroker(broker);
@@ -47,12 +49,12 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             <input
               id="useDummy"
               type="checkbox"
-              checked={localUseDummy}
-              onChange={(e) => setLocalUseDummy(e.target.checked)}
+              checked={useDummyTicks}
+              onChange={(e) => setUseDummyTicks(e.target.checked)}
               className="mr-2"
             />
             <label htmlFor="useDummy" className="text-sm">
-              Use Dummy Ticks
+              Use Dummy Ticks {marketClosed && '(market closed, forced)'}
             </label>
           </div>
         </div>
