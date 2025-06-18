@@ -6,12 +6,15 @@
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components
+│   ├── ChartPanel.tsx
 │   ├── Dashboard.tsx
 │   ├── DummyTickPanel.tsx
 │   ├── LiveDataPanel.tsx
 │   ├── LiveIndicatorPanel.tsx
 │   ├── LiveTickPanel.tsx
+│   ├── MarketDataPanel.tsx
 │   ├── OrderForm.tsx
+│   ├── SettingsModal.tsx
 │   ├── StrategyBuilderPanel.tsx
 │   ├── SymbolSelect.tsx
 │   └── ui
@@ -60,6 +63,8 @@
 ├── requirements.txt
 ├── tree_structure.md
 ├── tree_structure.txt
-└── tsconfig.json
+├── tsconfig.json
+└── utils
+    └── market.ts
 
-8 directories, 54 files
+9 directories, 58 files

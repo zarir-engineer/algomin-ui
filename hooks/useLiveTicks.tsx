@@ -9,13 +9,6 @@ interface Tick {
   timestamp: string;
 }
 
-function isMarketClosed() {
-  const now = new Date();
-  const hour = now.getHours();
-  const day = now.getDay(); // 0 = Sunday, 6 = Saturday
-  return day === 0 || day === 6 || hour < 9 || hour >= 16;
-}
-
 export default function useLiveTicks(symbol: string, broker: string, useDummy = false) {
   const [tick, setTick] = useState<Tick | null>(null);
 
