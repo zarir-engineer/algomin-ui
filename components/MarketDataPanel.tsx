@@ -1,7 +1,7 @@
 import React from 'react';
-import LiveDataPanel from './LiveDataPanel';
 import { DummyTickPanel } from './DummyTickPanel';
 import { useSettings } from '@/context/SettingsContext';
+import { LiveTickPanel } from './LiveTickPanel';
 
 export interface MarketDataPanelProps {
   symbol: string;
@@ -25,6 +25,6 @@ export default function MarketDataPanel({ symbol, broker }: MarketDataPanelProps
   return useDummyTicks ? (
     <DummyTickPanel symbol={symbol} broker={broker} />
   ) : (
-    <LiveDataPanel symbol={symbol} broker={broker} useDummy={false} />
+    <LiveTickPanel symbol={symbol} broker={broker} useDummy={false} />
   );
 }

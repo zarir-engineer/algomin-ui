@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { isMarketClosed } from '@/utils/market';
 
 interface Tick {
   symbol: string;
