@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { isMarketClosed } from '@/utils/market';
+import { WS_URL } from "@/lib/config";
 
 interface Tick {
   symbol: string;
@@ -23,7 +24,7 @@ export default function useLiveTicks(
       setTick(null);
       return;
     }
-    const url = `wss://web-production-4e6e.up.railway.app/ws/stream?broker=${broker}`;
+    const url = `${WS_URL}?broker=${broker}`;
     console.log('[useLiveTicks] connecting to', url);
 
     setTick(null); // clear previous tick

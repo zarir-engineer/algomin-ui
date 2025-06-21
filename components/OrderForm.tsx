@@ -3,6 +3,7 @@ import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SymbolSelect from "@/components/SymbolSelect";
+import { API_BASE } from "@/lib/config"
 
 export type OrderFormData = {
   tradingsymbol: string;
@@ -62,9 +63,8 @@ export default function OrderForm({ form, setForm, setResponseLog, setModal }: P
       return;
     }
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
-      const res = await fetch(`${apiBaseUrl}/order/place`, {
+      const res = await fetch(`${API_BASE}/order/place`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

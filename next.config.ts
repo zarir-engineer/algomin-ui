@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "connect-src 'self' wss://web-production-4e6e.up.railway.app ws://127.0.0.1:46630 https://algomin-symbols-fetcher-production.up.railway.app",
+              "connect-src 'self' wss://algomin-backend.up.railway.app ws://127.0.0.1:46630",
               // you can also add other directives here as needed
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
@@ -25,6 +25,15 @@ const nextConfig: NextConfig = {
   // any other Next.js options you need:
   reactStrictMode: true,
   // ...etc.
+};
+
+/** @type {import('next').NextConfig} */
+module.exports = {
+  env: {
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    NEXT_PUBLIC_SYMBOLS_URL: process.env.NEXT_PUBLIC_SYMBOLS_URL,
+    NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL,
+  },
 };
 
 export default nextConfig;

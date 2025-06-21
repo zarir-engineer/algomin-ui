@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 const indicators = ['EMA', 'SMA', 'MACD'];
 const operators = ['<', '>', '<=', '>=', '=='];
 const targetFields = ['LTP', 'Open', 'Close'];
+import { PlusCircle, MinusCircle } from "lucide-react"
 
 interface Rule {
   indicator: string;

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { SYMBOLS_URL } from "@/lib/config";
 
 export interface SymbolSelectProps {
   value: { symbol: string; token: string };
@@ -22,7 +23,9 @@ export default function SymbolSelect({
   useEffect(() => {
     const fetchSymbols = async () => {
       try {
-        const res = await fetch(process.env.NEXT_PUBLIC_SYMBOLS_URL!);
+        console.log("🔎 About to fetch symbols from:", SYMBOLS_URL);
+        console.log("Symbols URL →", SYMBOLS_URL);
+        const res = await fetch(SYMBOLS_URL!);
         const data = await res.json();
         setSymbols(data);
       } catch (err) {
