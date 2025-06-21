@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 const indicators = ['EMA', 'SMA', 'MACD'];
 const operators = ['<', '>', '<=', '>=', '=='];
 const targetFields = ['LTP', 'Open', 'Close'];
-import { PlusCircle, MinusCircle } from "lucide-react"
+import { PlusCircle, MinusCircle } from "lucide-react";
 
 interface Rule {
   indicator: string;
@@ -106,6 +106,7 @@ export default function StrategyBuilderPanel({ minRules = 2 }: StrategyBuilderPr
                 className="text-xl text-red-500 hover:text-red-700 px-2"
                 title="Remove"
               >
+                <MinusCircle size={20} />
                 <img src="/minus.png" alt="Minus" className="w-5 h-5" />
               </button>
             )}
@@ -118,7 +119,7 @@ export default function StrategyBuilderPanel({ minRules = 2 }: StrategyBuilderPr
                 title="Add condition"
                 className="hover:scale-105 transition-transform"
               >
-                <img src="/plus.png" alt="Add" className="w-5 h-5" />
+                <PlusCircle size={20} />
               </button>
             )}
           </div>
