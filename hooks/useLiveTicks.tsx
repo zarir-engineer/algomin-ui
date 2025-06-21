@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 import { isMarketClosed } from '@/utils/market';
 
@@ -10,11 +8,25 @@ interface Tick {
   timestamp: string;
 }
 
-export default function useLiveTicks(symbol: string, broker: string, useDummy = false) {
+export default function useLiveTicks(
+  symbol: string,
+  broker: string,
+  useDummy = false
+): Tick | null {
   const [tick, setTick] = useState<Tick | null>(null);
 
   useEffect(() => {
-    if (!symbol || !broker) return;
+
+    console.log('[useLiveTicks] → Effect start', { symbol, broker, useDummy });
+
+    if (!symbol || !broker) {
+      setTick(null);
+      return;
+    }
+    const url = `wss://web-production-4e6e.up.railway.app/ws/stream?broker=${broker}`;
+    console.log('[useLiveTicks] connecting to', url);
+
+    setTick(null); // clear previous tick
 
     if (useDummy || isMarketClosed()) {
       let ltp = 100 + Math.random() * 50;
@@ -22,10 +34,9 @@ export default function useLiveTicks(symbol: string, broker: string, useDummy = 
       const interval = setInterval(() => {
         const change = (Math.random() - 0.5) * 2;
         ltp = Math.max(10, ltp + change);
-
         setTick({
           symbol,
-          token: "DUMMY",
+          token: 'DUMMY',
           ltp: parseFloat(ltp.toFixed(2)),
           timestamp: new Date().toISOString(),
         });
@@ -33,30 +44,58 @@ export default function useLiveTicks(symbol: string, broker: string, useDummy = 
 
       return () => clearInterval(interval);
     }
-
-    // qualify WebSocket as a window API so TS picks up the DOM type
-    const socket = new window.WebSocket(
-      `wss://web-production-4e6e.up.railway.app/ws/stream?broker=${broker}`
-    );
+    let socket: WebSocket;
+    try {
+      socket = new window.WebSocket(url);
+    } catch (e) {
+      console.error('WS constructor threw', e);
+      return;
+    }
 
     socket.onopen = () => {
+      console.log('WS opened, subscribing to', symbol, broker);
       socket.send(JSON.stringify({ action: 'subscribe', symbol }));
+    };
+    socket.onerror = (err) => console.error('WS error', err);
+    socket.onclose = (e) => {
+      console.error(
+        'WS closed:',
+        'code=', e.code,
+        'reason=', e.reason || '(no reason provided)',
+        'wasClean=', e.wasClean
+      );
     };
 
     socket.onmessage = (event) => {
+      console.log('[useLiveTicks] → WS onmessage raw', event.data);
+      let data;
       try {
-        const data = JSON.parse(event.data);
-        if (data.symbol === symbol) setTick(data);
+        data = JSON.parse(event.data);
+        console.log('[useLiveTicks] → Parsed tick', data);
       } catch (err) {
-        console.error("Invalid WebSocket message", err);
+        console.error('Invalid WebSocket message', err);
+        return;
+      }
+      if (data.symbol === symbol) {
+        console.log('[useLiveTicks] → setTick', data);
+        setTick(data);
+      } else {
+        console.warn(
+          '[useLiveTicks] → Ignoring tick for other symbol',
+          data.symbol
+        );
       }
     };
 
     return () => {
+      // only send if the socket is actually open
+      console.log('[useLiveTicks] → Cleanup: unsubscribing & closing socket');
       if (socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify({ action: 'unsubscribe', symbol }));
-        socket.close();
+        console.log('[useLiveTicks] → Sent unsubscribe');
       }
+      // always attempt to close (no-op if already closed)
+      socket.close();
     };
   }, [symbol, broker, useDummy]);
 

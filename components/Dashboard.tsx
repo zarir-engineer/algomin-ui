@@ -1,5 +1,6 @@
 // components/Dashboard.tsx
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import { Settings as SettingsIcon } from 'lucide-react';
 import OrderForm, { OrderFormData } from './OrderForm';
 import MarketDataPanel from './MarketDataPanel';
@@ -34,6 +35,10 @@ export default function Dashboard() {
 
   const { tradingsymbol: symbol, symboltoken: broker } = form;
   const [showSettings, setShowSettings] = useState(false);
+
+  useEffect(() => {
+    console.log('Rendering MarketDataPanel with', { symbol, broker });
+  }, [symbol, broker]);
 
   return (
     <div className="flex flex-col h-full">
