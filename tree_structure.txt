@@ -5,15 +5,18 @@
 │   ├── globals.css
 │   ├── layout.tsx
 │   └── page.tsx
+├── backend_tree_structure.txt
 ├── components
 │   ├── ChartPanel.tsx
 │   ├── Dashboard.tsx
 │   ├── DummyTickPanel.tsx
+│   ├── FallbackChart.tsx
 │   ├── LiveDataPanel.tsx
 │   ├── LiveIndicatorPanel.tsx
 │   ├── LiveTickPanel.tsx
 │   ├── MarketDataPanel.tsx
 │   ├── OrderForm.tsx
+│   ├── RealTimeChart.tsx
 │   ├── SettingsModal.tsx
 │   ├── StrategyBuilderPanel.tsx
 │   ├── SymbolSelect.tsx
@@ -28,9 +31,14 @@
 ├── context
 │   ├── SettingsContext.tsx
 │   └── SettingsModal.tsx
+├── frontend_tree_structure.txt
 ├── hooks
+│   ├── CondiitionBuilder.tsx
 │   └── useLiveTicks.tsx
 ├── lib
+│   ├── config.ts
+│   ├── dummyTicks.ts
+│   ├── marketHours.ts
 │   └── utils.ts
 ├── misc
 │   ├── algomin-sb-02.png
@@ -44,7 +52,6 @@
 │   ├── plus.png
 │   └── problem-with-animation.png
 ├── next.config.ts
-├── next-env.d.ts
 ├── package.json
 ├── package-lock.json
 ├── postcss.config.mjs
@@ -64,7 +71,9 @@
 ├── tree_structure.md
 ├── tree_structure.txt
 ├── tsconfig.json
+├── types
+│   └── lightweight-charts-augment.d.ts
 └── utils
     └── market.ts
 
-9 directories, 58 files
+10 directories, 66 files
