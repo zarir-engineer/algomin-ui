@@ -2,8 +2,28 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { createChart, UTCTimestamp, CrosshairMode, LineStyle } from 'lightweight-charts';
+// import { createChart, UTCTimestamp, CrosshairMode, LineStyle } from 'lightweight-charts';
 import { makeDummyTicks } from '@/lib/dummyTicks';
+import {
+  createChart,
+  IChartApi,
+  UTCTimestamp,
+  CrosshairMode,
+  LineStyle,
+
+  // series types
+  CandlestickSeries,
+  BarSeries,
+  AreaSeries,
+  LineSeries,
+
+  // option types (if you need to pass options)
+  CandlestickSeriesOptions,
+  BarSeriesOptions,
+  AreaSeriesOptions,
+  LineSeriesOptions,
+} from 'lightweight-charts';
+
 
 interface FallbackChartProps {
   type: 'Line' | 'Area' | 'Candlestick' | 'Bar';
@@ -23,22 +43,31 @@ export default function FallbackChart({ type, width, height }: FallbackChartProp
     const chart = createChart(containerRef.current, {
       width,
       height,
-      layout: { backgroundColor: '#000', textColor: '#fff' },
+      layout: {
+        background: {
+          color: '#000',
+        },
+        textColor: '#fff',
+      },
       timeScale: { timeVisible: true },
       crosshair: { mode: CrosshairMode.Normal },
-    });
+    }) as IChartApi;
 
     chartRef.current = chart;
 
     // Create initial series
     if (type === 'Candlestick') {
-      seriesRef.current = chart.addCandlestickSeries();
+      seriesRef.current = chart.addSeries(CandlestickSeries,
+        {}
+        );
     } else if (type === 'Bar') {
-      seriesRef.current = chart.addBarSeries();
+      seriesRef.current = chart.addSeries(BarSeries,
+        {}
+        );
     } else if (type === 'Area') {
-      seriesRef.current = chart.addAreaSeries({ topColor: 'rgba(33, 150, 243, 0.56)', bottomColor: 'rgba(33, 150, 243, 0.04)' });
+      seriesRef.current = chart.addSeries(AreaSeries, { topColor: 'rgba(33, 150, 243, 0.56)', bottomColor: 'rgba(33, 150, 243, 0.04)' });
     } else {
-      seriesRef.current = chart.addLineSeries({ lineStyle: LineStyle.Solid });
+      seriesRef.current = chart.addSeries(LineSeries, { lineStyle: LineStyle.Solid });
     }
 
     return () => chart.remove();
@@ -54,13 +83,13 @@ export default function FallbackChart({ type, width, height }: FallbackChartProp
     seriesRef.current && chartRef.current.removeSeries(seriesRef.current);
 
     if (type === 'Candlestick') {
-      seriesRef.current = chartRef.current.addCandlestickSeries();
+      seriesRef.current = chartRef.current.addSeries(CandlestickSeries, {});
     } else if (type === 'Bar') {
-      seriesRef.current = chartRef.current.addBarSeries();
+      seriesRef.current = chartRef.current.addSeries(BarSeries, {});
     } else if (type === 'Area') {
-      seriesRef.current = chartRef.current.addAreaSeries({ topColor: 'rgba(33, 150, 243, 0.56)', bottomColor: 'rgba(33, 150, 243, 0.04)' });
+      seriesRef.current = chartRef.current.addSeries(AreaSeries, { topColor: 'rgba(33, 150, 243, 0.56)', bottomColor: 'rgba(33, 150, 243, 0.04)' });
     } else {
-      seriesRef.current = chartRef.current.addLineSeries({ lineStyle: LineStyle.Solid });
+      seriesRef.current = chartRef.current.addSeries(LineSeries, { lineStyle: LineStyle.Solid });
     }
 
     // Generate dummy data
