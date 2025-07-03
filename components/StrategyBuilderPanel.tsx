@@ -1,10 +1,11 @@
 // components/StrategyBuilderPanel.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import ConditionBuilder from './ConditionBuilder';
-import useLiveTicks from '@/hooks/useLiveTicks';
-import SymbolSelect from './SymbolSelect';
+import LivePriceSubscriber from './LivePriceSubscriber';
+import { Card, CardContent, CardHeader } from '@/components/ui';
+
 
 export interface StrategyBuilderPanelProps {
   minRules?: number;
@@ -55,32 +56,43 @@ export default function StrategyBuilderPanel({ minRules = 1 }: StrategyBuilderPa
     setSymbols(unique);
   }, [conditions]);
 
-  // Subscribe to live prices using useLiveTicks for each symbol
-  useEffect(() => {
-    const prices: Record<string, number> = {};
-    const timers = symbols.map(symbol => {
-      const tick = useLiveTicks(symbol, 'DUMMY', true); // replace 'DUMMY' and true with real broker/useDummy as needed
-      if (tick?.ltp !== undefined) prices[symbol] = tick.ltp;
-    });
-    setLivePrices(prices);
-  }, [symbols]);
-
-  const handleConditionsChange = (conds: any[]) => {
+  // ✅ Render one subscriber per symbol; each will call the hook correctly
+  //    and push its latest LTP back up via onUpdate.
+  const handleConditionsChange = useCallback((conds: Condition[]) => {
     setConditions(conds);
-  };
+  }, []);
 
-  const allMet = conditions.every(c => evaluateCondition(c, livePrices));
+  // render subscribers for each symbol
+  const subscribers = symbols.map(symbol => (
+    <LivePriceSubscriber
+      key={symbol}
+      symbol={symbol}
+      onUpdate={(sym, ltp) => setLivePrices(prev => ({ ...prev, [sym]: ltp }))}
+    />
+  ));
+
+  // check if all conditions are met
+  const allMet =
+    conditions.length >= minRules &&
+    conditions.every(c => evaluateCondition(c, livePrices));
+
 
   return (
-    <div className="p-4 border rounded shadow bg-white">
-      <h2 className="text-lg font-semibold mb-4">Strategy Builder</h2>
-      <ConditionBuilder onChange={handleConditionsChange} />
-      <div className="mt-4">
-        <span className="text-sm font-medium">Evaluation Result: </span>
-        <span className={allMet ? 'text-green-600' : 'text-red-600'}>
-          {allMet ? 'All conditions met' : 'Not met'}
-        </span>
-      </div>
-    </div>
+    <Card>
+      <CardHeader>Strategy Builder</CardHeader>
+      <CardContent>
+	{/* ADHD Tip: ConditionBuilder calls onChange when rules update */}    
+	<ConditionBuilder onChange={handleConditionsChange} />
+	{/* ADHD Tip: Render subscribers invisibly to update livePrices */}     
+	{subscribers}
+	{/* ADHD Tip: Show result when rules can be evaluated */}
+	<div className="mt-4">
+	  <span className="text-sm font-medium">Result: </span>
+	  <span className={allMet ? 'text-green-600' : 'text-red-600'}>
+	    {allMet ? 'All conditions met' : 'Not met'}
+	  </span>	
+	</div>
+    </CardContent>
+    </Card>
   );
 }
