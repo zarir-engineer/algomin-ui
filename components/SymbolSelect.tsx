@@ -37,10 +37,10 @@ export default function SymbolSelect({
 
   // Keep input in sync with selected symbol
   useEffect(() => {
-    if (value?.symbol) {
-      setSearch(value.symbol); // Set search to selected symbol
-    }
-  }, [value.symbol]);
+  if (value?.symbol && value.symbol !== search) {
+    setSearch(value.symbol);
+  }
+  }, [value.symbol, search]);
 
   const filtered = symbols.filter(s => s.symbol.toLowerCase().startsWith(search.toLowerCase()));
 

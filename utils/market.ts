@@ -1,10 +1,18 @@
 // utils/market.ts
-export function isMarketClosed(): boolean {
+export function isMarketClosed() {
   const now = new Date();
-  const hour = now.getHours();
-  const day = now.getDay(); // 0 = Sunday, 6 = Saturday
-  // Market open Monday–Friday from 9:00 to 15:30
-  const afterOpen  = hour > 9  || (hour === 9  && now.getMinutes() >= 0);
-  const beforeClose = hour < 15 || (hour === 15 && now.getMinutes() < 30);
-  return day === 0 || day === 6 || !(afterOpen && beforeClose);
+  const istOffset = 5.5 * 60; // minutes offset for IST
+  const local = new Date(now.getTime() + istOffset * 60000);
+
+  const day = local.getDay(); // Sunday = 0, Saturday = 6
+  const hours = local.getHours();
+  const minutes = local.getMinutes();
+  const totalMinutes = hours * 60 + minutes;
+
+  return (
+    day === 0 || // Sunday
+    day === 6 || // Saturday
+    totalMinutes < (9 * 60 + 15) || // before 9:15 AM
+    totalMinutes > (15 * 60 + 30)   // after 3:30 PM
+  );
 }

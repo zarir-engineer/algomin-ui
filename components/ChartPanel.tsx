@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import FallbackChart from './FallbackChart';
 import { AdvancedChart } from 'react-tradingview-embed';
-import { isMarketOpen } from '@/lib/marketHours';
+import { isMarketClosed } from '@/utils/market';
 
 export type SeriesType = 'Line' | 'Area' | 'Candlestick' | 'Bar';
 
@@ -25,7 +25,7 @@ const chartOptions: SeriesType[] = ['Line', 'Area', 'Candlestick', 'Bar'];
 
 export default function ChartPanel({ symbol, height = 400 }: ChartPanelProps) {
   const [seriesType, setSeriesType] = useState<SeriesType>('Line');
-  const marketOpen = isMarketOpen();
+  const marketOpen = !isMarketClosed();
 
   return (
     <div style={{ height }}>
