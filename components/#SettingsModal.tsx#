@@ -55,12 +55,9 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
               className="w-full border rounded px-2 py-1"
             >
               <option value="">Select Broker</option>
-              {brokerList.map(broker => (
-                <option key={broker} value={broker.toLowerCase().replace(/\s+/g, "_")}>
-                  {broker}
-                </option>
-              ))}
-            </select>            
+              <option value="angel_one">Angel One</option>
+              <option value="zerodha">Zerodha</option>
+            </select>
           </div>
           <div className="flex items-center">
             <input
