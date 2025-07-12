@@ -11,11 +11,12 @@ export interface StrategyBuilderPanelProps {
   minRules?: number;
 }
 
-interface Condition {
-  symbol: string;
+type Condition = {
+  symbol: string | { symbol: string; token: string };
   operator: string;
   value: number;
-}
+};
+
 
 interface ConditionGroup {
   type: 'AND' | 'OR';
@@ -23,7 +24,9 @@ interface ConditionGroup {
 }
 
 function evaluateCondition(cond: Condition, livePrices: Record<string, number>) {
-  const ltp = livePrices[cond.symbol];
+  const symbolKey = typeof cond.symbol === 'string' ? cond.symbol : cond.symbol.symbol;
+  const ltp = livePrices[symbolKey];
+
   if (ltp === undefined) return false;
   switch (cond.operator) {
     case '>': return ltp > cond.value;
@@ -52,8 +55,15 @@ export default function StrategyBuilderPanel({ minRules = 1 }: StrategyBuilderPa
 
   // Collect unique symbols and fetch their ticks
   useEffect(() => {
-    const unique = Array.from(new Set(conditions.map(c => c.symbol).filter(Boolean)));
+    const unique = Array.from(
+      new Set(
+        conditions
+          .map(c => typeof c.symbol === 'string' ? c.symbol : c.symbol.symbol)
+          .filter(Boolean)
+      )
+    );
     setSymbols(unique);
+
   }, [conditions]);
 
   // ✅ Render one subscriber per symbol; each will call the hook correctly
