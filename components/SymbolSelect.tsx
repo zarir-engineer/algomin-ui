@@ -1,61 +1,71 @@
 'use client';
 
-import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { SYMBOLS_URL } from "@/lib/config";
 
-export interface SymbolSelectProps {
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+
+interface SymbolSelectProps {
   value: { symbol: string; token: string };
-  onChange: (val: { symbol: string; token: string }) => void;
-  placeholder: string;
+  onChange: (s: { symbol: string; token: string }) => void;
+  placeholder?: string;
   error?: boolean;
 }
 
-export default function SymbolSelect({
+export default React.memo(function SymbolSelect({
   value,
   onChange,
-  placeholder,
+  placeholder = 'Search symbol…',
   error = false,
 }: SymbolSelectProps) {
   const [symbols, setSymbols] = useState<{ symbol: string; token: string }[]>([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(value.symbol || '');
 
+  // 1️⃣ fetch ONCE
   useEffect(() => {
-    const fetchSymbols = async () => {
-      try {
-        console.log("🔎 About to fetch symbols from:", SYMBOLS_URL);
-        console.log("Symbols URL →", SYMBOLS_URL);
-        const res = await fetch(SYMBOLS_URL!);
-        const data = await res.json();
-        setSymbols(data);
-      } catch (err) {
-        console.error("❌ Failed to fetch symbols.json", err);
-      }
+    let cancelled = false;
+    console.log('🔎 About to fetch symbols from:', SYMBOLS_URL);
+    fetch(SYMBOLS_URL!)
+      .then((r) => r.json())
+      .then((data) => !cancelled && setSymbols(data))
+      .catch((err) => console.error('❌ Failed to fetch symbols.json', err));
+    return () => {
+      cancelled = true;
     };
-    fetchSymbols();
-  }, []);
+  }, []); // ← no deps, fires only on mount
 
-  // Keep input in sync with selected symbol
+  // 2️⃣ keep `search` in sync with external `value`
   useEffect(() => {
-  if (value?.symbol && value.symbol !== search) {
-    setSearch(value.symbol);
-  }
+    if (value.symbol !== search) {
+      setSearch(value.symbol);
+    }
   }, [value.symbol, search]);
 
-  const filtered = symbols.filter(s => s.symbol.toLowerCase().startsWith(search.toLowerCase()));
+  // 3️⃣ memoize the filtered list
+  const filtered = useMemo(
+    () =>
+      symbols.filter((s) =>
+        s.symbol.toLowerCase().startsWith(search.toLowerCase())
+      ),
+    [symbols, search]
+  );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setSearch(val);
+  // 4️⃣ stabilize your change handler
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value;
+      setSearch(val);
 
-    const match = symbols.find(s => s.symbol === val);
-    if (match) {
-      onChange(match);
-    } else {
-      // Clear symboltoken if symbol doesn't match
-      onChange({ symbol: val, token: "" });
-    }
-  };
+      const match = symbols.find((s) => s.symbol === val);
+      if (match) {
+        onChange(match);
+      } else {
+        onChange({ symbol: val, token: '' });
+      }
+    },
+    [symbols, onChange]
+  );
+
 
   return (
     <div className="flex flex-col relative">
@@ -77,4 +87,4 @@ export default function SymbolSelect({
       </datalist>
     </div>
 );
-}
+});
