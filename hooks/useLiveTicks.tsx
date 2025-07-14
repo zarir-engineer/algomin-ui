@@ -1,130 +1,104 @@
-import { useEffect, useState } from 'react';
-import { isMarketClosed } from '@/utils/market';
-import { WS_URL } from "@/lib/config";
+import { useEffect, useState, useRef } from 'react';
+import { WS_URL } from '@/lib/config';
 
 interface Tick {
-
-    symbol: string;
-    token: string;
-    ltp: number;
-    timestamp: string;
+  symbol: string;
+  token: string;
+  ltp: number;
+  timestamp: string;
 }
 
 export default function useLiveTicks(
-    symbol: string,
-    broker: string,
-    useDummy = false
+  symbol: string,
+  broker: string
 ): Tick | null {
-    const [tick, setTick] = useState<Tick | null>(null);
+  const [tick, setTick] = useState<Tick | null>(null);
+  const socketRef = useRef<WebSocket | null>(null);
+  const retryTimerRef = useRef<number | null>(null);
+  const retryCountRef = useRef(0);
+  const MAX_RETRIES = 5;
 
-    useEffect(() => {
+  useEffect(() => {
+    console.log('[useLiveTicks] → Effect start', { symbol, broker });
 
-        console.log('[useLiveTicks] → Effect start', { symbol, broker, useDummy });
+    // Only connect when symbol is complete
+    if (!symbol || symbol.length < 3) {
+      console.log(`[useLiveTicks] → Symbol incomplete (${symbol}), waiting`);
+      setTick(null);
+      return;
+    }
 
-        if (!symbol || !broker) {
-            setTick(null);
-            return;
-        }
-        const url = `${WS_URL}?broker=${broker}`;
-        console.log('[useLiveTicks] connecting to', url);
+    // Validate inputs
+    if (!broker || !WS_URL) {
+      console.warn('[useLiveTicks] → Missing broker or WS_URL, aborting');
+      setTick(null);
+      return;
+    }
 
-        setTick(null); // clear previous tick
+    const url = `${WS_URL}?broker=${broker}`;
+    let shouldReconnect = true;
 
-        if (useDummy || isMarketClosed()) {
-            let ltp = 100 + Math.random() * 50;
+    const connect = () => {
+      if (retryCountRef.current >= MAX_RETRIES) {
+        console.warn(
+          `[useLiveTicks] → Reached max retries (${MAX_RETRIES}), stopping attempts`
+        );
+        return;
+      }
+      console.log(
+        `[useLiveTicks] → Attempt ${retryCountRef.current + 1} to connect`,
+        url
+      );
+      const socket = new WebSocket(url);
+      socketRef.current = socket;
 
-            const interval = setInterval(() => {
-                const change = (Math.random() - 0.5) * 2;
-                ltp = Math.max(10, ltp + change);
-                setTick({
-                    symbol,
-                    token: 'DUMMY',
-                    ltp: parseFloat(ltp.toFixed(2)),
-                    timestamp: new Date().toISOString(),
-                });
-            }, 1000);
+      socket.onopen = () => {
+        console.log('✅ WS opened, subscribing to', symbol, broker);
+        retryCountRef.current = 0;
+        socket.send(JSON.stringify({ action: 'subscribe', symbol }));
+      };
 
-            return () => clearInterval(interval);
-        }
-
-
-        let socket: WebSocket;
-
+      socket.onmessage = (event) => {
         try {
-            socket = new WebSocket(url);
-
-            socket.onopen = () => {
-                console.log("✅ WebSocket connected:", url);
-            };
-
-            socket.onmessage = (msg) => {
-                console.log("📨 WS message:", msg.data);
-            };
-
-            socket.onerror = (event) => {
-                console.error("❌ WebSocket error", event);
-                // Optional: show this in UI or trigger a reconnect
-            };
-
-            socket.onclose = (event) => {
-                console.warn("🔌 WebSocket closed", {
-                    code: event.code,
-                    reason: event.reason,
-                    wasClean: event.wasClean,
-                });
-            };
-
-        } catch (e) {
-            console.error("🚫 WS constructor threw", e);
-            return;
+          const data = JSON.parse(event.data);
+          if (data.symbol === symbol) {
+            setTick(data);
+          }
+        } catch {
+          console.warn('[useLiveTicks] → Invalid WS message');
         }
+      };
 
-        socket.onopen = () => {
-            console.log('WS opened, subscribing to', symbol, broker);
-            socket.send(JSON.stringify({ action: 'subscribe', symbol }));
-        };
-        socket.onerror = (err) => console.error('WS error', err);
-        socket.onclose = (e) => {
-            console.error(
-                'WS closed:',
-                'code=', e.code,
-                'reason=', e.reason || '(no reason provided)',
-                'wasClean=', e.wasClean
-            );
-        };
+      // Simplified error logging to avoid error overlay
+      socket.onerror = () => {
+        console.warn('[useLiveTicks] → WS encountered an error');
+        shouldReconnect = false;
+        if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+        socket.close();
+      };
 
-        socket.onmessage = (event) => {
-            console.log('[useLiveTicks] → WS onmessage raw', event.data);
-            let data;
-            try {
-                data = JSON.parse(event.data);
-                console.log('[useLiveTicks] → Parsed tick', data);
-            } catch (err) {
-                console.error('Invalid WebSocket message', err);
-                return;
-            }
-            if (data.symbol === symbol) {
-                console.log('[useLiveTicks] → setTick', data);
-                setTick(data);
-            } else {
-                console.warn(
-                    '[useLiveTicks] → Ignoring tick for other symbol',
-                    data.symbol
-                );
-            }
-        };
+      socket.onclose = (e) => {
+        console.warn('[useLiveTicks] → WS closed', e);
+        if (shouldReconnect) {
+          retryCountRef.current += 1;
+          console.log(
+            `[useLiveTicks] → Retrying in 5s (retry ${retryCountRef.current})`
+          );
+          retryTimerRef.current = window.setTimeout(connect, 5000);
+        }
+      };
+    };
 
-        return () => {
-            // only send if the socket is actually open
-            console.log('[useLiveTicks] → Cleanup: unsubscribing & closing socket');
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({ action: 'unsubscribe', symbol }));
-                console.log('[useLiveTicks] → Sent unsubscribe');
-            }
-            // always attempt to close (no-op if already closed)
-            socket.close();
-        };
-    }, [symbol, broker, useDummy]);
+    connect();
 
-    return tick;
+    return () => {
+      console.log('[useLiveTicks] → Cleanup: stopping and closing socket');
+      shouldReconnect = false;
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+      socketRef.current?.close();
+      socketRef.current = null;
+    };
+  }, [symbol, broker]);
+
+  return tick;
 }

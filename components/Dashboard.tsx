@@ -6,6 +6,7 @@ import OrderForm, { OrderFormData } from './OrderForm';
 import MarketDataPanel from './MarketDataPanel';
 import StrategyBuilderPanel from './StrategyBuilderPanel';
 import SettingsModal from './SettingsModal';
+import { useSettings } from '@/context/SettingsContext';
 
 export default function Dashboard() {
   // form state for OrderForm
@@ -33,8 +34,9 @@ export default function Dashboard() {
     content: '',
   });
 
-  const { tradingsymbol: symbol, symboltoken: broker } = form;
   const [showSettings, setShowSettings] = useState(false);
+  const { tradingsymbol: symbol } = form;
+  const { broker } = useSettings();
 
   useEffect(() => {
     console.log('Rendering MarketDataPanel with', { symbol, broker });

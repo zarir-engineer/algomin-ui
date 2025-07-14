@@ -3,6 +3,8 @@
 
 import { useEffect } from 'react';
 import useLiveTicks from '@/hooks/useLiveTicks';
+import { useSettings } from '@/context/SettingsContext';
+
 
 interface Props {
   symbol: string;
@@ -10,8 +12,9 @@ interface Props {
 }
 
 export default function LivePriceSubscriber({ symbol, onUpdate }: Props) {
-  // ✅ Hook at top‐level of this component
-  const tick = useLiveTicks(symbol, 'DUMMY', true);
+  // ✅ Hook at top‐level of this component, using real broker & dummy flag
+  const { broker, useDummyTicks } = useSettings();
+  const tick = useLiveTicks(symbol, broker, useDummyTicks);
 
   useEffect(() => {
     if (tick?.ltp !== undefined) {

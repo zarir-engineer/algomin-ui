@@ -16,26 +16,27 @@ export function DummyTickPanel({ symbol, broker }: DummyTickPanelProps) {
   const [ticks, setTicks] = useState<{ time: string; price: number }[]>([]);
 
   useEffect(() => {
-    // ADHD Tip: This effect runs once on mount and sets up an interval to update `ticks`.
+    // ADHD Tip: This effect runs only once on mount
     let price = 1000;
-    const interval = setInterval(() => {
-      // ADHD Tip: Simulate price fluctuation every second.
+
+    const interval = window.setInterval(() => {
+      // ADHD Tip: Simulate price fluctuation every second
       price = Math.max(0, price + (Math.random() - 0.5) * 20);
       const time = new Date().toLocaleTimeString();
 
       setTicks(prev => {
-        // ADHD Tip: Guard `prev` to ensure it's an array before slicing.
+        // ADHD Tip: Ensure `prev` is an array
         const safePrev = Array.isArray(prev) ? prev : [];
-        // ADHD Tip: Keep only the last 49 entries to prevent unlimited growth.
+        // ADHD Tip: Keep last 49 entries
         const recent = safePrev.slice(-49);
-        // ADHD Tip: Return a new array (no in-place mutations).
+        // Return new array only inside interval
         return [...recent, { time, price: parseFloat((price / 100).toFixed(2)) }];
       });
     }, 1000);
 
-    // ADHD Tip: Cleanup on unmount to stop the timer and avoid leaks.
+    // ADHD Tip: Clean up interval on unmount
     return () => clearInterval(interval);
-  }, []); // ADHD Tip: Empty dependency array ensures this runs only once, preventing infinite loops.
+  }, []); // <-- empty deps: runs once
 
   return (
     <Card>
