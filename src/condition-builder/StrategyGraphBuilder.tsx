@@ -1,7 +1,7 @@
 // components/StrategyGraphBuilder.tsx
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -14,93 +14,82 @@ import ReactFlow, {
   Node,
   Handle,
   Position,
+  ReactFlowInstance,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-const CANDLE_FIELDS = ['Open', 'High', 'Low', 'Close'];
-const OPERATORS = ['>', '<', '>=', '<=', '==', '!='];
-const OFFSETS = ['0', '-1', '-2'];
+function RootGroupNode({ data }: any) {
+  const [showCondition, setShowCondition] = useState(false);
+  const [inputValue, setInputValue] = useState('');
 
-function ConditionNode({ data }: any) {
   return (
-    <div className="bg-white rounded shadow p-3 text-xs w-56">
-      <div className="font-semibold mb-2">Condition Node</div>
-      <div className="flex flex-col gap-1">
-        <label>Candle Field:</label>
-        <select defaultValue={data.left || 'Close'} className="border rounded px-2 py-1">
-          {CANDLE_FIELDS.map(f => <option key={f}>{f}</option>)}
+    <div className="bg-gray-100 rounded shadow p-4 w-[calc(100vw-32px)] h-[calc(100vh-32px)] border">
+      <div className="flex justify-between items-center mb-2 text-xs">
+        <select defaultValue={data.operator} className="border rounded px-2 py-1">
+          <option value="AND">AND</option>
+          <option value="OR">OR</option>
         </select>
-
-        <label>Offset:</label>
-        <select defaultValue={data.offset || '0'} className="border rounded px-2 py-1">
-          {OFFSETS.map(o => <option key={o}>{o}</option>)}
-        </select>
-
-        <label>Operator:</label>
-        <select defaultValue={data.operator || '>'} className="border rounded px-2 py-1">
-          {OPERATORS.map(op => <option key={op}>{op}</option>)}
-        </select>
-
-        <label>Compare To:</label>
-        <input type="number" defaultValue={data.value || 0} className="border rounded px-2 py-1" />
+        <div className="flex gap-2">
+          <button
+            className="text-xs px-2 py-1 bg-green-200 rounded"
+            onClick={() => setShowCondition(true)}
+          >
+            + Condition
+          </button>
+          <button className="text-xs px-2 py-1 bg-blue-200 rounded">+ Group</button>
+          <button className="text-xs px-2 py-1 bg-red-200 rounded">×</button>
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        {showCondition && (
+          <input
+            type="text"
+            placeholder="Choose"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className="border rounded px-2 py-1 text-xs bg-white shadow w-64"
+          />
+        )}
       </div>
       <Handle type="source" position={Position.Bottom} />
-    </div>
-  );
-}
-
-function LogicOperatorNode({ data }: any) {
-  return (
-    <div className="bg-black text-white rounded shadow px-4 py-2">
-      LogicOperatorNode: {data.operator}
       <Handle type="target" position={Position.Top} />
-      <Handle type="source" position={Position.Bottom} />
     </div>
   );
 }
 
 const nodeTypes = {
-  conditionNode: ConditionNode,
-  logicNode: LogicOperatorNode,
+  rootGroupNode: RootGroupNode,
 };
 
 const initialNodes: Node[] = [
   {
-    id: '1',
-    type: 'conditionNode',
-    position: { x: 50, y: 100 },
-    data: { left: 'Close', offset: '0', operator: '>', value: 2500 },
-  },
-  {
-    id: '2',
-    type: 'conditionNode',
-    position: { x: 250, y: 100 },
-    data: { left: 'Close', offset: '0', operator: '<', value: 16000 },
-  },
-  {
-    id: '3',
-    type: 'logicNode',
-    position: { x: 150, y: 250 },
+    id: 'root-1',
+    type: 'rootGroupNode',
+    position: { x: 16, y: 16 },
     data: { operator: 'AND' },
   },
 ];
 
-const initialEdges: Edge[] = [
-  { id: 'e1-3', source: '1', target: '3' },
-  { id: 'e2-3', source: '2', target: '3' },
-];
+const initialEdges: Edge[] = [];
 
 export default function StrategyGraphBuilder() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const reactFlowInstance = useRef<ReactFlowInstance | null>(null);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     []
   );
 
+  const onInit = useCallback((instance: ReactFlowInstance) => {
+    reactFlowInstance.current = instance;
+    instance.fitView();
+  }, []);
+
   return (
-    <div style={{ width: '100%', height: '80vh' }}>
+    <div ref={reactFlowWrapper} style={{ width: '100%', height: '100vh' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -108,7 +97,7 @@ export default function StrategyGraphBuilder() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        fitView
+        onInit={onInit}
       >
         <Background />
         <MiniMap />
