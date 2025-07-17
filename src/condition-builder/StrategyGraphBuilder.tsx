@@ -1,7 +1,7 @@
 // components/StrategyGraphBuilder.tsx
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -68,56 +68,65 @@ function RootGroupNode({ data }: any) {
           <button className="text-xs px-2 py-1 bg-red-200 rounded">×</button>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        {showCondition && (
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Choose"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="border rounded px-2 py-1 text-xs bg-white shadow w-64"
-            />
-            {filtered.length > 0 && (
-              <ul className="absolute z-10 mt-1 bg-white border rounded shadow text-xs w-64 max-h-40 overflow-auto">
-                {filtered.map((group, gi) => (
-                  <React.Fragment key={gi}>
-                    <li className="px-2 py-1 font-semibold text-gray-500 cursor-default bg-gray-50">
-                      {group.label}
-                    </li>
-                    {group.options.map((opt, i) => (
-                      <li
-                        key={i}
-                        className="px-2 py-1 hover:bg-blue-100 cursor-pointer"
-                        onClick={() => handleSelectOption(opt)}
-                      >
-                        {opt}
-                      </li>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
 
-        {selectedConditions.map((cond, index) => (
-          <div
-            key={index}
-            className="relative border rounded px-3 py-2 text-xs bg-white shadow w-fit flex items-center gap-2"
-          >
-            <button className="absolute top-0 left-0 text-xs" title="Duplicate">+</button>
-            <span className="text-blue-700 font-semibold">{cond}</span>
-            <button
-              className="absolute top-0 right-0 text-xs"
-              title="Delete"
-              onClick={() => handleRemove(index)}
-            >
-              ×
-            </button>
-          </div>
-        ))}
+      <div className="relative">
+        {selectedConditions.length > 1 && (
+          <div className="absolute left-2 top-0 bottom-0 w-px bg-black" />
+        )}
+        <div className="flex flex-col gap-2 pl-4">
+          {showCondition && (
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Choose"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                className="border rounded px-2 py-1 text-xs bg-white shadow w-64"
+              />
+              {filtered.length > 0 && (
+                <ul className="absolute z-10 mt-1 bg-white border rounded shadow text-xs w-64 max-h-40 overflow-auto">
+                  {filtered.map((group, gi) => (
+                    <React.Fragment key={gi}>
+                      <li className="px-2 py-1 font-semibold text-gray-500 cursor-default bg-gray-50">
+                        {group.label}
+                      </li>
+                      {group.options.map((opt, i) => (
+                        <li
+                          key={i}
+                          className="px-2 py-1 hover:bg-blue-100 cursor-pointer"
+                          onClick={() => handleSelectOption(opt)}
+                        >
+                          {opt}
+                        </li>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {selectedConditions.map((cond, index) => (
+            <div key={index} className="relative flex items-center gap-2">
+              {selectedConditions.length > 1 && (
+                <div className="absolute left-[-16px] top-1/2 w-4 h-px bg-gray-700" />
+              )}
+              <div className="relative border rounded px-3 py-2 text-xs bg-white shadow w-fit flex items-center gap-2">
+                <button className="absolute top-0 left-0 text-xs" title="Duplicate">+</button>
+                <span className="text-blue-700 font-semibold">{cond}</span>
+                <button
+                  className="absolute top-0 right-0 text-xs"
+                  title="Delete"
+                  onClick={() => handleRemove(index)}
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
       <Handle type="source" position={Position.Bottom} />
       <Handle type="target" position={Position.Top} />
     </div>
@@ -170,6 +179,8 @@ export default function StrategyGraphBuilder() {
         panOnScroll={false}
         zoomOnScroll={false}
         zoomOnPinch={false}
+        nodesDraggable={false}
+        nodesConnectable={false}
       >
         <Background />
         <MiniMap />
