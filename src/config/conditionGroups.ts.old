@@ -1,0 +1,20 @@
+// config/conditionGroups.ts
+
+export const GROUPS = [
+  {
+    label: 'Price Data',
+    options: ['Open', 'High', 'Low', 'Close', 'Volume', 'LTP', 'VWAP']
+  },
+  {
+    label: 'Comparison Operators',
+    options: ['>', '<', '>=', '<=', '==', '!=']
+  },
+  {
+    label: 'Technical',
+    options: ['SMA', 'EMA', 'RSI', 'MACD', 'VWAP', 'Supertrend', 'Bollinger', 'ADX']
+  },
+  {
+    label: 'Strategy Info',
+    options: ['Capital', 'PnL', 'UsedMargin', 'MaxDrawdown', 'PositionSize', 'OrderCount']
+  }
+];

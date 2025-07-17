@@ -1,0 +1,291 @@
+price data -- label
+bid price
+vwap
+synthetic futures
+tick size
+lot size
+previous close
+avg price
+open interest
+traded value
+ask price
+bid ask diff
+LTP
+Volume
+Change
+Change%
+Technical -- label
+Hull MA
+CMO
+Value When
+ADX Smooth
+Fisher Transform
+ALMA
+TRIMA
+Donchain Ch Middle
+Indicator Value (Time)
+StochRsiD
+Highest High Value
+Awesome Oscillator
+Renko - Closed candle
+Choppiness Index
+HV
+Donchain Ch Upper
+Donchain Ch Lower
+Donchain Ch Width
+SUPERTREND
+Volume Price Trend
+Kaufman Adaptive MA
+Bollinger Band width
+LSMA
+RSI Series
+Keltner Close
+OBV
+StochRsiK
+Renko
+OHLC Sum
+Cross
+LINEARREG SLOPE
+LINEARREG_INTERCE
+LINEARREG_ANGLE
+LINEARREG
+OHLC Spread
+ROC
+StochK
+StochD
+ORB
+Typical Price
+DEMA
+TRIX
+TEMA
+Volume series
+MFI
+ohlcv
+Renko dynamic bricks
+DI-
+DI+
+Heikin Ashi
+VWAP Series
+Lowest Low Value
+KST
+Alligator
+Vortex VI-
+Vortex VI+
+Pivot Point
+Ultimate Oscillator
+Keltner Channels
+Zero Lag EMA
+Kaufman Efficiency indicator
+Symbol
+ATR
+SMA
+RSI
+OPEN
+DTI
+BBPercentage
+Chandelier Exit
+Elder Force Index
+Chaikin Money Flow
+Stochastic Moementum Index
+MOM
+MOM Oscillator
+ST SMA
+Line Break Closed
+Line Break
+Central Pivot Range
+Coppock Curve
+VWMA
+Balance of Power
+HIGH
+LOW
+CLOSE
+ADX
+AROONUP
+AROONDOWN
+CCI
+TR
+ROCP
+KST Signal
+Percentage Price Oscillator
+WILLR
+WMA
+SAR
+Upper Bolinger
+Lower Bolinger
+MACD
+EMA
+Macdsignal
+Macdhist
+Position
+DateTime -- label
+Date
+Hour
+Time
+Week
+Now
+Week Day
+Days Difference (D2-D1)
+Today
+Tomorrow
+Year Day
+Year
+Month
+Day
+Sec
+Minute
+Next Trading Day
+RuntimeVariables -- label
+Init Var
+Get Runtime Number
+EntryUnderlyingPrice
+LastRepairedPrice
+LastRepairedUnderlyingPrice
+LastRepairedATMIV
+LastRepairedDate
+LastRepairedTime
+LastRepairedValue
+LastRepairedATMStrike
+EntryTheta
+EntryIV
+EntryRho
+EntryATMIV
+EntryDate
+EntryTime
+EntryValue
+EntryATMStrike
+EntryDelta
+EntryVega
+EntryGamma
+LastRepairedDelta
+LastRepairedTheta
+Last Repaired Price
+LastRepairedRho
+LastRepairedIV
+Set Runtime
+EntryPrice
+LastRepairedGamma
+Last Repaired Underlying Price
+Get Runtime
+LastRepairedVega
+StrategyInfo -- label
+Positions Detail
+Multiplier
+Max Profit
+PNL Underlying
+Universal Exit TSL
+Max Loss
+Equity
+Margin
+Net Quantity
+Open Positions Detail
+Required Capital
+Capital Deployed
+PNL
+Open Positions
+Leg Exit
+Leg TSL
+Leg SL trail
+Traded Instrument Name
+Traded Instrument
+Statistis -- label
+Harmonic Mean
+Sum
+Log Return
+Percentile
+Percentile Rank
+Variance
+Log Zscore
+Median
+correl
+Ratio
+Mean
+Stdev
+Math -- label
+Math Operation
+Min
+Number
+Max
+Absolute
+Round
+Math Series Operation
+Random Number(0.00-1.00)
+Options -- label
+Max OI Value
+Max OI Strike
+Max OI Instrument
+PCR
+Total OI
+OptionGreeks -- label
+Vega
+Delta Neutral
+lv
+RHO
+Net Delta
+Delta
+Theta
+Atmiv
+Theta Neutral
+Gamma Neutral
+Vega Neutral
+Net Gamma
+Net Theta
+Gamma
+Net Vega
+StrikeFormula -- label
+ATM
+ATM SPOT
+Find Strike Crypto
+Get Strike
+Find Strike
+ExpiryFormula -- label
+Crypto Current Day Expiry
+Crypto Current Month Expiry
+Crypto Current Week Expiry
+MCX Fut Expiry
+Current Month Expiry
+Current Week Expiry
+Previous Expiry
+MCX Option Expiry
+Current Day Expiry
+InstrumentFormula -- label
+Select Expiry
+Instrument Name
+Futures
+Rank -- label
+Rank top
+Rank bottom
+Fx -- label
+GBPINR
+USDGBP
+USDINR
+EURINR
+Series_Ops --label
+Multiply Array
+Divide Array
+Sqrt
+Subtract Array
+Power
+Add Array
+Candle Patterns -- label
+INVERTED HAMMER
+DRAGONFLY DOJI
+GRAVESTONE DOJI
+HAMMER
+SHOOTINGSTAR
+MORNINGSTAR
+MORNINGDOJISTAR
+ENGULFING
+MARUBOZU
+HARAMI
+EVENINGSTAR
+DOJI
+HANGINGMAN
+Comparison -- label
++
+-
+*
+/
+%
+!=
+(
+)
