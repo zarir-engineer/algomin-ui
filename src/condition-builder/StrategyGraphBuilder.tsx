@@ -134,6 +134,7 @@ const initialNodes: Node[] = [
     type: 'rootGroupNode',
     position: { x: 0, y: 0 },
     data: { operator: 'AND' },
+    style: { width: '100vw', height: '100vh' },
   },
 ];
 
@@ -152,7 +153,7 @@ export default function StrategyGraphBuilder() {
 
   const onInit = useCallback((instance: ReactFlowInstance) => {
     reactFlowInstance.current = instance;
-    instance.zoomTo(0.5);
+    instance.zoomTo(1);
   }, []);
 
   return (
