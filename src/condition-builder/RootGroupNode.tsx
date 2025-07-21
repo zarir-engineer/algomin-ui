@@ -83,22 +83,6 @@ function RootGroupNode({ data }: any) {
             onSelectOption={handleSelectOption}
           />
         )}
-        {selectedConditions.map((cond, index) => (
-          <div
-            key={index}
-            className="relative border rounded px-3 py-2 text-xs bg-white shadow w-fit flex items-center gap-2"
-          >
-            <button className="absolute top-0 left-0 text-xs" title="Duplicate">+</button>
-            <span className="text-blue-700 font-semibold">{cond}</span>
-            <button
-              className="absolute top-0 right-0 text-xs"
-              title="Delete"
-              onClick={() => handleRemove(index)}
-            >
-              ×
-            </button>
-          </div>
-        ))}
       </div>
       <Handle type="source" position={Position.Bottom} />
       <Handle type="target" position={Position.Top} />
