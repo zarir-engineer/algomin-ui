@@ -7,13 +7,13 @@ import MarketDataPanel from './MarketDataPanel';
 import StrategyBuilderPanel from './StrategyBuilderPanel';
 import SettingsModal from './SettingsModal';
 import { useSettings } from '@/context/SettingsContext';
-import StrategyGraphBuilder from '@/src/condition-builder/StrategyGraphBuilder';
-
+// import StrategyGraphBuilder from '@/src/condition-builder/StrategyGraphBuilder';
+import RootGroupNodeBuilder from '@/src/condition-builder/RootGroupNode'
 
 export default function Dashboard() {
   return (
     <div className="p-4">
-      <StrategyGraphBuilder />
+      <RootGroupNodeBuilder />
     </div>
   );
 }

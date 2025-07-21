@@ -1,4 +1,4 @@
-// components/StrategyGraphBuilder.tsx
+// components/RootGroupNodeBuilder.tsx
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -18,6 +18,8 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { GROUPS } from '@/src/config/conditionGroups';
+import ChooseBlock from './ChooseBlock';
+
 
 function RootGroupNode({ data }: any) {
   const [showCondition, setShowCondition] = useState(false);
@@ -49,7 +51,10 @@ function RootGroupNode({ data }: any) {
   };
 
   return (
-    <div className="bg-gray-100 rounded shadow p-4 w-full h-full border relative overflow-auto">
+    <div
+      className="border rounded bg-gray-100 shadow p-4 overflow-auto"
+      style={{ width: 'calc(100vw - 32px)', height: 'calc(100vh - 32px)' }}
+    >
       <div className="flex justify-between items-center mb-2 text-xs sticky top-0 bg-gray-100 z-10">
         {selectedConditions.length > 1 && (
           <select defaultValue={data.operator} className="border rounded px-2 py-1">
@@ -70,37 +75,14 @@ function RootGroupNode({ data }: any) {
       </div>
       <div className="flex flex-col gap-2">
         {showCondition && (
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Choose"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="border rounded px-2 py-1 text-xs bg-white shadow w-64"
-            />
-            {filtered.length > 0 && (
-              <ul className="absolute z-10 mt-1 bg-white border rounded shadow text-xs w-64 max-h-40 overflow-auto">
-                {filtered.map((group, gi) => (
-                  <React.Fragment key={gi}>
-                    <li className="px-2 py-1 font-semibold text-gray-500 cursor-default bg-gray-50">
-                      {group.label}
-                    </li>
-                    {group.options.map((opt, i) => (
-                      <li
-                        key={i}
-                        className="px-2 py-1 hover:bg-blue-100 cursor-pointer"
-                        onClick={() => handleSelectOption(opt)}
-                      >
-                        {opt}
-                      </li>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </ul>
-            )}
-          </div>
+          <ChooseBlock
+            inputValue={inputValue}
+            onChange={setInputValue}
+            onDelete={() => setShowCondition(false)}
+            groups={GROUPS}
+            onSelectOption={handleSelectOption}
+          />
         )}
-
         {selectedConditions.map((cond, index) => (
           <div
             key={index}
@@ -139,7 +121,7 @@ const initialNodes: Node[] = [
 
 const initialEdges: Edge[] = [];
 
-export default function StrategyGraphBuilder() {
+export default function RootGroupNodeBuilder() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -152,7 +134,7 @@ export default function StrategyGraphBuilder() {
 
   const onInit = useCallback((instance: ReactFlowInstance) => {
     reactFlowInstance.current = instance;
-    instance.zoomTo(0.5);
+    instance.setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 0 }); // prevent zoomTo(0.5)
   }, []);
 
   return (
@@ -169,6 +151,9 @@ export default function StrategyGraphBuilder() {
         panOnScroll={false}
         zoomOnScroll={false}
         zoomOnPinch={false}
+        zoomOnDoubleClick={false}
+        fitView={true}
+        preventScrolling={false} // ← allows page scroll but not canvas move
       >
         <Background />
         <MiniMap />
