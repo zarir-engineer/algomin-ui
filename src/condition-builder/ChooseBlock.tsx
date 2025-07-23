@@ -38,7 +38,7 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
   };
 
   return (
-    <div className="relative w-full max-w-6xl mt-8 ml-8 rounded-md border border-gray-300 bg-gray-100 shadow-md overflow-visible h-auto pb-6">
+    <div className="relative w-full max-w-6xl mt-8 ml-8 rounded-md border border-gray-300 bg-gray-100 shadow-md overflow-visible min-h-[70px] pb-6">
       {/* Floating Copy Icon (Top Left) */}
       <button
         className="absolute -top-3 -left-3 z-10 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow"
@@ -57,12 +57,12 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
       </button>
 
       {/* Gray left bar */}
-      <div className="bg-gray-300 w-12 h-full rounded-l-md float-left" />
+      <div className="bg-gray-300 w-12 min-h-[90px] rounded-l-md float-left" />
 
       {/* Choose input field and condition block */}
       <div className="pl-16 pr-6 pt-5 flex items-start">
         {/* Choose field */}
-        <div className="flex flex-col gap-2 shrink-0">
+        <div className="flex flex-col gap-2 shrink-0 z-10">
           {!selected && (
             <>
               <input
@@ -100,7 +100,7 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
 
         {/* Render selected preview block */}
         {selected && (
-          <div className="ml-6 mt-1">
+          <div className="absolute left-64 top-5 z-0">
             <div className="relative bg-white border border-blue-200 shadow-inner rounded p-3 text-sm text-blue-700 inline-block">
               {/* Inner floating Copy Icon */}
               <button
@@ -119,7 +119,7 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
                 <X className="w-3.5 h-3.5 text-red-600" />
               </button>
 
-              <div className="font-semibold mb-1 flex justify-center">{selected}</div>
+              <div className="font-semibold mb-1 flex justify-center">SelectionPreviewBlock</div>
               <div className="text-xs text-gray-700">
                 {selected} ( Symbol ( Instrument Name ( ), day, All ), 15, 15 ), 0
               </div>
