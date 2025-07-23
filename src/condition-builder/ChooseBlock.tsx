@@ -38,7 +38,7 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
   };
 
   return (
-    <div className="relative w-full max-w-6xl mt-8 ml-8 rounded-md border border-gray-300 bg-gray-100 shadow-md overflow-visible min-h-[70px] pb-6">
+    <div className="relative w-full max-w-6xl mt-8 ml-8 rounded-md border border-gray-300 bg-gray-100 shadow-md overflow-visible min-h-[160px] pb-6">
       {/* Floating Copy Icon (Top Left) */}
       <button
         className="absolute -top-3 -left-3 z-10 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow"
@@ -57,7 +57,7 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
       </button>
 
       {/* Gray left bar */}
-      <div className="bg-gray-300 w-12 min-h-[90px] rounded-l-md float-left" />
+      <div className="bg-gray-300 w-12 h-full rounded-l-md float-left" />
 
       {/* Choose input field and condition block */}
       <div className="pl-16 pr-6 pt-5 flex items-start">
