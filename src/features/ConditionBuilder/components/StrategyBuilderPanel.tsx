@@ -67,6 +67,7 @@ export default function StrategyBuilderPanel({ minRules = 1 }: StrategyBuilderPa
     <Card>
       <CardHeader>Strategy Builder</CardHeader>
       <CardContent>
+        {/*ConditionBuilderV2 onChange={handleConditionsChange} */}
         <ConditionBuilder node={rootGroup} onChange={setRootGroup} />
         {subscribers}
         <div className="mt-4">

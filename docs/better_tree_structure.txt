@@ -1,0 +1,73 @@
+/src
+├── components             # Shared, presentational UI primitives
+│   ├── Button.tsx
+│   ├── Card.tsx
+│   ├── SymbolSelect.tsx
+│   └── ...
+├── features
+│   ├── ConditionBuilder   # All condition-builder logic
+│   │   ├── components      # Presentational parts for condition building
+│   │   │   ├── ChooseBlock.tsx
+│   │   │   ├── ContextForm.tsx
+│   │   │   ├── ConditionBuilder.tsx       # original component
+│   │   │   ├── ConditionBuilderV2.tsx     # v2 iteration
+│   │   │   ├── RootGroupNode.tsx          # moved from strategy builder
+│   │   │   └── StrategyBuilderPanel.tsx   # if still used here
+│   │   ├── hooks           # Hooks for condition workflow
+│   │   │   └── useConditions.ts
+│   │   ├── models          # Types & metadata definitions
+│   │   │   ├── Condition.ts
+│   │   │   └── KeywordMeta.ts
+│   │   └── services        # Business logic / API
+│   │       └── conditionService.ts
+│   ├── Charts             # Chart-related features & panels
+│   │   ├── components
+│   │   │   ├── ChartPanel.tsx
+│   │   │   ├── RealTimeChart.tsx
+│   │   │   ├── FallbackChart.tsx
+│   │   │   └── ...
+│   │   └── hooks
+│   │       └── useLiveTicks.ts
+│   ├── DataPanels         # Live data display panels
+│   │   ├── components
+│   │   │   ├── LiveDataPanel.tsx
+│   │   │   ├── LiveIndicatorPanel.tsx
+│   │   │   ├── LiveTickPanel.tsx
+│   │   │   ├── DummyTickPanel.tsx
+│   │   │   ├── MarketDataPanel.tsx
+│   │   │   └── LivePriceSubscriber.tsx
+│   │   └── services
+│   │       └── marketDataService.ts
+│   ├── Dashboard          # Dashboard feature (pages/layout)
+│   │   └── Dashboard.tsx
+│   ├── Orders             # Order form & trading features
+│   │   └── OrderForm.tsx
+│   └── Settings           # Application settings modal
+│       └── SettingsModal.tsx
+├── pages                  # Next.js pages (if using pages router)
+│   └── index.tsx
+└── styles                 # Global styles, themes, Tailwind configs
+    └── globals.css
+
+
+Why This Is Pattern-Friendly
+
+Feature Isolation (Domain-Driven):
+Each feature folder (ConditionBuilder, StrategyBuilder) groups its own components, hooks, services, and types.
+Encourages High Cohesion, Low Coupling.
+
+Separation of Concerns:
+/components: purely presentational, reusable across features (atomic design).
+/hooks & /services: contain business logic decoupled from UI.
+/store: manages application state in slices (Redux/Zustand).
+
+Scalability:
+Adding a new feature only touches its own folder — minimal impact on others.
+Encourages Modularity and easier code-splitting.
+
+Testability:
+You can co-locate tests next to their modules (e.g. ConditionBuilder.test.tsx within the feature folder).
+
+Maintainability:
+Clear boundaries make onboarding new devs simpler.
+Aligns with common architectural patterns (Clean Architecture, Hexagonal Architecture in a React context).
