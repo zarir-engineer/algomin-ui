@@ -17,9 +17,8 @@ import ReactFlow, {
   ReactFlowInstance,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { GROUPS } from '@/src/config/conditionGroups';
-import ChooseBlock from './ChooseBlock';
-
+import { GROUPS } from '@/src/features/ConditionBuilder/models/conditionGroups'
+import ChooseBlock from '@/src/features/ConditionBuilder/components/ChooseBlock'
 
 function RootGroupNode({ data }: any) {
   const [showCondition, setShowCondition] = useState(false);
@@ -131,6 +130,7 @@ export default function RootGroupNodeBuilder() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onInit={onInit}
+        nodesDraggable={false}
         panOnDrag={false}
         panOnScroll={false}
         zoomOnScroll={false}

@@ -3,8 +3,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { isMarketClosed } from '@/utils/market';
-
+import { isMarketClosed } from '@/src/features/DataPanels/services/marketDataService'
 interface SettingsContextType {
   /** Whether the app should use dummy tick data */
   useDummyTicks: boolean;

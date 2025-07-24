@@ -8,7 +8,7 @@ import StrategyBuilderPanel from './StrategyBuilderPanel';
 import SettingsModal from './SettingsModal';
 import { useSettings } from '@/context/SettingsContext';
 // import StrategyGraphBuilder from '@/src/condition-builder/StrategyGraphBuilder';
-import RootGroupNodeBuilder from '@/src/condition-builder/RootGroupNode'
+import RootGroupNodeBuilder from '@/src/features/ConditionBuilder/components/RootGroupNode'
 
 export default function Dashboard() {
   return (
