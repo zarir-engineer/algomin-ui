@@ -1,361 +1,53 @@
-export const GROUPS = [
+// src/features/ConditionBuilder/models/conditionGroups.ts
+
+export interface ConditionOption {
+  key: string;
+  label: string;
+  params: string[]; // Options in Tulip => the indicator inputs
+}
+
+export interface ConditionGroup {
+  label: string;
+  options: ConditionOption[];
+}
+
+export const GROUPS: ConditionGroup[] = [
   {
-    label: 'Price Data',
+    label: 'Basic Price',
     options: [
-      "bid price",
-    "vwap",
-    "synthetic futures",
-    "tick size",
-    "lot size",
-    "previous close",
-    "avg price",
-    "open interest",
-    "traded value",
-    "ask price",
-    "bid ask diff",
-    "LTP",
-    "Volume",
-    "Change",
-    "Change%"
-    ]
+      { key: 'avgprice', label: 'Average Price', params: [] },        // no params :contentReference[oaicite:1]{index=1}
+      { key: 'medprice', label: 'Median Price', params: [] },         // no params :contentReference[oaicite:2]{index=2}
+      { key: 'typprice', label: 'Typical Price', params: [] },         // no params :contentReference[oaicite:3]{index=3}
+    ],
   },
   {
-    label: 'Technical',
+    label: 'Volatility',
     options: [
-      "Hull MA",
-    "CMO",
-    "Value When",
-    "ADX Smooth",
-    "Fisher Transform",
-    "ALMA",
-    "TRIMA",
-    "Donchain Ch Middle",
-    "Indicator Value (Time)",
-    "StochRsiD",
-    "Highest High Value",
-    "Awesome Oscillator",
-    "Renko - Closed candle",
-    "Choppiness Index",
-    "HV",
-    "Donchain Ch Upper",
-    "Donchain Ch Lower",
-    "Donchain Ch Width",
-    "SUPERTREND",
-    "Volume Price Trend",
-    "Kaufman Adaptive MA",
-    "Bollinger Band width",
-    "LSMA",
-    "RSI Series",
-    "Keltner Close",
-    "OBV",
-    "StochRsiK",
-    "Renko",
-    "OHLC Sum",
-    "Cross",
-    "LINEARREG SLOPE",
-    "LINEARREG_INTERCE",
-    "LINEARREG_ANGLE",
-    "LINEARREG",
-    "OHLC Spread",
-    "ROC",
-    "StochK",
-    "StochD",
-    "ORB",
-    "Typical Price",
-    "DEMA",
-    "TRIX",
-    "TEMA",
-    "Volume series",
-    "MFI",
-    "ohlcv",
-    "Renko dynamic bricks",
-    "DI-",
-    "DI+",
-    "Heikin Ashi",
-    "VWAP Series",
-    "Lowest Low Value",
-    "KST",
-    "Alligator",
-    "Vortex VI-",
-    "Vortex VI+",
-    "Pivot Point",
-    "Ultimate Oscillator",
-    "Keltner Channels",
-    "Zero Lag EMA",
-    "Kaufman Efficiency indicator",
-    "Symbol",
-    "ATR",
-    "SMA",
-    "RSI",
-    "OPEN",
-    "DTI",
-    "BBPercentage",
-    "Chandelier Exit",
-    "Elder Force Index",
-    "Chaikin Money Flow",
-    "Stochastic Moementum Index",
-    "MOM",
-    "MOM Oscillator",
-    "ST SMA",
-    "Line Break Closed",
-    "Line Break",
-    "Central Pivot Range",
-    "Coppock Curve",
-    "VWMA",
-    "Balance of Power",
-    "HIGH",
-    "LOW",
-    "CLOSE",
-    "ADX",
-    "AROONUP",
-    "AROONDOWN",
-    "CCI",
-    "TR",
-    "ROCP",
-    "KST Signal",
-    "Percentage Price Oscillator",
-    "WILLR",
-    "WMA",
-    "SAR",
-    "Upper Bolinger",
-    "Lower Bolinger",
-    "MACD",
-    "EMA",
-    "Macdsignal",
-    "Macdhist",
-    "Position"
-    ]
+      { key: 'atr', label: 'Average True Range (ATR)', params: ['symbol', 'period'] },    // 1 option period :contentReference[oaicite:4]{index=4}
+      { key: 'natr', label: 'Normalized ATR', params: ['symbol', 'period'] },            // requires period :contentReference[oaicite:5]{index=5}
+      { key: 'bbands', label: 'Bollinger Bands', params: ['symbol', 'timeperiod', 'stdDev'] }, // 2 options :contentReference[oaicite:6]{index=6}
+      { key: 'var', label: 'Variance Over Period', params: ['symbol', 'period'] },        // requires period :contentReference[oaicite:7]{index=7}
+    ],
   },
   {
-    label: 'DateTime',
+    label: 'Momentum & Oscillators',
     options: [
-      "Date",
-    "Hour",
-    "Time",
-    "Week",
-    "Now",
-    "Week Day",
-    "Days Difference (D2-D1)",
-    "Today",
-    "Tomorrow",
-    "Year Day",
-    "Year",
-    "Month",
-    "Day",
-    "Sec",
-    "Minute",
-    "Next Trading Day"
-    ]
+      { key: 'rsi', label: 'RSI', params: ['symbol', 'period'] },             // optInTimePeriod :contentReference[oaicite:8]{index=8}
+      { key: 'cmo', label: 'Chande Momentum Oscillator (CMO)', params: ['symbol', 'period'] }, // [optInTimePeriod] :contentReference[oaicite:9]{index=9}
+      { key: 'macd', label: 'MACD', params: ['symbol', 'fast', 'slow', 'signal'] }, // 3 options :contentReference[oaicite:10]{index=10}
+      { key: 'mfi', label: 'Money Flow Index (MFI)', params: ['symbol', 'period'] },      // 1 option periods :contentReference[oaicite:11]{index=11}
+      { key: 'stoch', label: 'Stochastic Oscillator', params: ['symbol', 'fastK', 'slowK', 'slowD'] }, // 3 opt :contentReference[oaicite:12]{index=12}
+      { key: 'ultosc', label: 'Ultimate Oscillator', params: ['symbol', 'period1', 'period2', 'period3'] }, // 3 opt :contentReference[oaicite:13]{index=13}
+    ],
   },
   {
-    label: 'RuntimeVariables',
+    label: 'Trend & Smoothing',
     options: [
-      "Init Var",
-    "Get Runtime Number",
-    "EntryUnderlyingPrice",
-    "LastRepairedPrice",
-    "LastRepairedUnderlyingPrice",
-    "LastRepairedATMIV",
-    "LastRepairedDate",
-    "LastRepairedTime",
-    "LastRepairedValue",
-    "LastRepairedATMStrike",
-    "EntryTheta",
-    "EntryIV",
-    "EntryRho",
-    "EntryATMIV",
-    "EntryDate",
-    "EntryTime",
-    "EntryValue",
-    "EntryATMStrike",
-    "EntryDelta",
-    "EntryVega",
-    "EntryGamma",
-    "LastRepairedDelta",
-    "LastRepairedTheta",
-    "Last Repaired Price",
-    "LastRepairedRho",
-    "LastRepairedIV",
-    "Set Runtime",
-    "EntryPrice",
-    "LastRepairedGamma",
-    "Last Repaired Underlying Price",
-    "Get Runtime",
-    "LastRepairedVega"
-    ]
-  },
-  {
-    label: 'StrategyInfo',
-    options: [
-      "Positions Detail",
-    "Multiplier",
-    "Max Profit",
-    "PNL Underlying",
-    "Universal Exit TSL",
-    "Max Loss",
-    "Equity",
-    "Margin",
-    "Net Quantity",
-    "Open Positions Detail",
-    "Required Capital",
-    "Capital Deployed",
-    "PNL",
-    "Open Positions",
-    "Leg Exit",
-    "Leg TSL",
-    "Leg SL trail",
-    "Traded Instrument Name",
-    "Traded Instrument"
-    ]
-  },
-  {
-    label: 'Statistis',
-    options: [
-      "Harmonic Mean",
-    "Sum",
-    "Log Return",
-    "Percentile",
-    "Percentile Rank",
-    "Variance",
-    "Log Zscore",
-    "Median",
-    "correl",
-    "Ratio",
-    "Mean",
-    "Stdev"
-    ]
-  },
-  {
-    label: 'Math',
-    options: [
-      "Math Operation",
-    "Min",
-    "Number",
-    "Max",
-    "Absolute",
-    "Round",
-    "Math Series Operation",
-    "Random Number(0.00-1.00)"
-    ]
-  },
-  {
-    label: 'Options',
-    options: [
-      "Max OI Value",
-    "Max OI Strike",
-    "Max OI Instrument",
-    "PCR",
-    "Total OI"
-    ]
-  },
-  {
-    label: 'OptionGreeks',
-    options: [
-      "Vega",
-    "Delta Neutral",
-    "lv",
-    "RHO",
-    "Net Delta",
-    "Delta",
-    "Theta",
-    "Atmiv",
-    "Theta Neutral",
-    "Gamma Neutral",
-    "Vega Neutral",
-    "Net Gamma",
-    "Net Theta",
-    "Gamma",
-    "Net Vega"
-    ]
-  },
-  {
-    label: 'StrikeFormula',
-    options: [
-      "ATM",
-    "ATM SPOT",
-    "Find Strike Crypto",
-    "Get Strike",
-    "Find Strike"
-    ]
-  },
-  {
-    label: 'ExpiryFormula',
-    options: [
-      "Crypto Current Day Expiry",
-    "Crypto Current Month Expiry",
-    "Crypto Current Week Expiry",
-    "MCX Fut Expiry",
-    "Current Month Expiry",
-    "Current Week Expiry",
-    "Previous Expiry",
-    "MCX Option Expiry",
-    "Current Day Expiry"
-    ]
-  },
-  {
-    label: 'InstrumentFormula',
-    options: [
-      "Select Expiry",
-    "Instrument Name",
-    "Futures"
-    ]
-  },
-  {
-    label: 'Rank',
-    options: [
-      "Rank top",
-    "Rank bottom"
-    ]
-  },
-  {
-    label: 'Fx',
-    options: [
-      "GBPINR",
-    "USDGBP",
-    "USDINR",
-    "EURINR"
-    ]
-  },
-  {
-    label: 'Series_Ops',
-    options: [
-      "Multiply Array",
-    "Divide Array",
-    "Sqrt",
-    "Subtract Array",
-    "Power",
-    "Add Array"
-    ]
-  },
-  {
-    label: 'Candle Patterns',
-    options: [
-      "INVERTED HAMMER",
-    "DRAGONFLY DOJI",
-    "GRAVESTONE DOJI",
-    "HAMMER",
-    "SHOOTINGSTAR",
-    "MORNINGSTAR",
-    "MORNINGDOJISTAR",
-    "ENGULFING",
-    "MARUBOZU",
-    "HARAMI",
-    "EVENINGSTAR",
-    "DOJI",
-    "HANGINGMAN"
-    ]
-  },
-  {
-    label: 'Comparison',
-    options: [
-      "+",
-    "-",
-    "*",
-    "/",
-    "%",
-    "!=",
-    "(",
-    ")"
-    ]
+      { key: 'ema', label: 'Exponential Moving Avg (EMA)', params: ['symbol', 'period'] }, // :contentReference[oaicite:14]{index=14}
+      { key: 'sma', label: 'Simple Moving Avg (SMA)', params: ['symbol', 'period'] },       // :contentReference[oaicite:15]{index=15}
+      { key: 'tema', label: 'Triple EMA (TEMA)', params: ['symbol', 'period'] },           // 1 opt :contentReference[oaicite:16]{index=16}
+      { key: 'dema', label: 'Double EMA (DEMA)', params: ['symbol', 'period'] },           // :contentReference[oaicite:17]{index=17}
+      { key: 'linreg', label: 'Linear Regression', params: ['symbol', 'period'] },         // 1 opt period :contentReference[oaicite:18]{index=18}
+    ],
   },
 ];

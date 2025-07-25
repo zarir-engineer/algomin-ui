@@ -7,6 +7,8 @@ import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { getClipboard, setClipboard } from '@/src/utils/clipboard';
+import { GROUPS } from '@/src/features/ConditionBuilder/models/conditionGroups';
+import ContextUI from './ContextUI';
 
 interface ChooseBlockProps {
   onDelete: () => void;
@@ -73,6 +75,8 @@ function PreviewBlock({ id, content, onRemove }: PreviewBlockProps) {
 export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOption, groups }: ChooseBlockProps) {
   const [filtered, setFiltered] = useState<typeof groups>([]);
   const [selectedItems, setSelectedItems] = useState<{ id: string; label: string }[]>([]);
+  const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
+  const [contextParams, setContextParams] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (inputValue.trim() === '') {
@@ -142,13 +146,28 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
       <div className="flex items-start gap-6 px-4 pt-6">
         {/* Choose field */}
         <div className="flex flex-col gap-2 shrink-0 z-10 w-48">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Choose"
-            className="border border-gray-300 rounded px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring focus:border-blue-300"
-          />
+          <select
+            value={selectedKeyword || ''}
+            onChange={(e) => {
+              const keyword = e.target.value;
+              setSelectedKeyword(keyword);
+              setContextParams({});
+              onChange(keyword); // update parent
+              onSelectOption(keyword); // trigger preview
+            }}
+          >
+
+            <option value="">Choose...</option>
+            {GROUPS.map(group => (
+              <optgroup key={group.label} label={group.label}>
+                {group.options.map(opt => (
+                  <option key={opt.key} value={opt.key}>
+                    {opt.label}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
 
           {filtered.length > 0 && (
             <ul className="mt-1 bg-white border rounded shadow text-xs max-h-40 overflow-auto z-10">
@@ -171,6 +190,30 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
             </ul>
           )}
         </div>
+
+        {selectedKeyword && (
+          <ContextUI
+            keyword={selectedKeyword}
+            params={contextParams}
+            onParamChange={(key, val) => setContextParams(prev => ({ ...prev, [key]: val }))}
+            onConfirm={() => {
+              // ✅ Add to preview
+              const uniqueId = generateUniqueId(selectedKeyword);
+              setSelectedItems(prev => [
+                ...prev,
+                { id: uniqueId, label: `${selectedKeyword} (${Object.entries(contextParams).map(([k, v]) => `${k}: ${v}`).join(', ')})` }
+              ]);
+              // Reset UI
+              setSelectedKeyword(null);
+              setContextParams({});
+            }}
+            onCancel={() => {
+              setSelectedKeyword(null);
+              setContextParams({});
+            }}
+          />
+        )}
+
 
         {/* Sortable preview blocks */}
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

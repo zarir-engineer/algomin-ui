@@ -1,0 +1,393 @@
+// src/features/ConditionBuilder/models/conditionGroups.ts
+
+export interface ConditionOption {
+  key: string;
+  label: string;
+  params: string[]; // Editable in future to match your needs
+}
+
+export interface ConditionGroup {
+  label: string;
+  options: ConditionOption[];
+}
+
+export const GROUPS: ConditionGroup[] = [
+  {
+    label: 'Price Data',
+    options: [
+      { key: 'bid_price', label: 'Bid Price', params: ['symbol'] },
+      { key: 'vwap', label: 'VWAP', params: ['symbol', 'period'] },
+      { key: 'synthetic_futures', label: 'Synthetic Futures', params: ['symbol', 'expiry', 'strike'] },
+      { key: 'tick_size', label: 'Tick Size', params: ['symbol'] },
+      { key: 'lot_size', label: 'Lot Size', params: ['symbol'] },
+      { key: 'previous_close', label: 'Previous Close', params: ['symbol'] },
+      { key: 'avg_price', label: 'Average Price', params: ['symbol'] },
+      { key: 'open_interest', label: 'Open Interest', params: ['symbol'] },
+      { key: 'traded_value', label: 'Traded Value', params: ['symbol'] },
+      { key: 'ask_price', label: 'Ask Price', params: ['symbol'] },
+      { key: 'bid_ask_diff', label: 'Bid-Ask Difference', params: ['symbol'] },
+      { key: 'ltp', label: 'LTP', params: ['symbol'] },
+      { key: 'volume', label: 'Volume', params: ['symbol'] },
+      { key: 'change', label: 'Change', params: ['symbol'] },
+      { key: 'change_percent', label: 'Change (%)', params: ['symbol'] },
+    ],
+  },
+  {
+    label: 'Technical',
+    options: [
+      { key: 'hull_ma', label: 'Hull Moving Average', params: ['symbol', 'length'] },
+      { key: 'cmo', label: 'CMO', params: ['symbol', 'length'] },
+      { key: 'rsi', label: 'RSI', params: ['symbol', 'length'] },
+      { key: 'macd', label: 'MACD', params: ['symbol', 'fast', 'slow'] },
+      { key: 'supertrend', label: 'Supertrend', params: ['symbol', 'atrPeriod', 'multiplier'] },
+      { key: 'sma', label: 'Simple Moving Average', params: ['symbol', 'length'] },
+      { key: 'ema', label: 'Exponential Moving Average', params: ['symbol', 'length'] },
+      { key: 'bollinger_bands', label: 'Bollinger Bands', params: ['symbol', 'length', 'stdDev'] },
+      { key: 'donchian_channel', label: 'Donchian Channel', params: ['symbol', 'length'] },
+      { key: 'adx', label: 'ADX', params: ['symbol', 'length'] },
+    ],
+  },
+];
+
+
+
+  {
+    label: 'Technical',
+    options: [
+      "Hull MA",
+    "CMO",
+    "Value When",
+    "ADX Smooth",
+    "Fisher Transform",
+    "ALMA",
+    "TRIMA",
+    "Donchain Ch Middle",
+    "Indicator Value (Time)",
+    "StochRsiD",
+    "Highest High Value",
+    "Awesome Oscillator",
+    "Renko - Closed candle",
+    "Choppiness Index",
+    "HV",
+    "Donchain Ch Upper",
+    "Donchain Ch Lower",
+    "Donchain Ch Width",
+    "SUPERTREND",
+    "Volume Price Trend",
+    "Kaufman Adaptive MA",
+    "Bollinger Band width",
+    "LSMA",
+    "RSI Series",
+    "Keltner Close",
+    "OBV",
+    "StochRsiK",
+    "Renko",
+    "OHLC Sum",
+    "Cross",
+    "LINEARREG SLOPE",
+    "LINEARREG_INTERCE",
+    "LINEARREG_ANGLE",
+    "LINEARREG",
+    "OHLC Spread",
+    "ROC",
+    "StochK",
+    "StochD",
+    "ORB",
+    "Typical Price",
+    "DEMA",
+    "TRIX",
+    "TEMA",
+    "Volume series",
+    "MFI",
+    "ohlcv",
+    "Renko dynamic bricks",
+    "DI-",
+    "DI+",
+    "Heikin Ashi",
+    "VWAP Series",
+    "Lowest Low Value",
+    "KST",
+    "Alligator",
+    "Vortex VI-",
+    "Vortex VI+",
+    "Pivot Point",
+    "Ultimate Oscillator",
+    "Keltner Channels",
+    "Zero Lag EMA",
+    "Kaufman Efficiency indicator",
+    "Symbol",
+    "ATR",
+    "SMA",
+    "RSI",
+    "OPEN",
+    "DTI",
+    "BBPercentage",
+    "Chandelier Exit",
+    "Elder Force Index",
+    "Chaikin Money Flow",
+    "Stochastic Moementum Index",
+    "MOM",
+    "MOM Oscillator",
+    "ST SMA",
+    "Line Break Closed",
+    "Line Break",
+    "Central Pivot Range",
+    "Coppock Curve",
+    "VWMA",
+    "Balance of Power",
+    "HIGH",
+    "LOW",
+    "CLOSE",
+    "ADX",
+    "AROONUP",
+    "AROONDOWN",
+    "CCI",
+    "TR",
+    "ROCP",
+    "KST Signal",
+    "Percentage Price Oscillator",
+    "WILLR",
+    "WMA",
+    "SAR",
+    "Upper Bolinger",
+    "Lower Bolinger",
+    "MACD",
+    "EMA",
+    "Macdsignal",
+    "Macdhist",
+    "Position"
+    ]
+  },
+  {
+    label: 'DateTime',
+    options: [
+      "Date",
+    "Hour",
+    "Time",
+    "Week",
+    "Now",
+    "Week Day",
+    "Days Difference (D2-D1)",
+    "Today",
+    "Tomorrow",
+    "Year Day",
+    "Year",
+    "Month",
+    "Day",
+    "Sec",
+    "Minute",
+    "Next Trading Day"
+    ]
+  },
+  {
+    label: 'RuntimeVariables',
+    options: [
+      "Init Var",
+    "Get Runtime Number",
+    "EntryUnderlyingPrice",
+    "LastRepairedPrice",
+    "LastRepairedUnderlyingPrice",
+    "LastRepairedATMIV",
+    "LastRepairedDate",
+    "LastRepairedTime",
+    "LastRepairedValue",
+    "LastRepairedATMStrike",
+    "EntryTheta",
+    "EntryIV",
+    "EntryRho",
+    "EntryATMIV",
+    "EntryDate",
+    "EntryTime",
+    "EntryValue",
+    "EntryATMStrike",
+    "EntryDelta",
+    "EntryVega",
+    "EntryGamma",
+    "LastRepairedDelta",
+    "LastRepairedTheta",
+    "Last Repaired Price",
+    "LastRepairedRho",
+    "LastRepairedIV",
+    "Set Runtime",
+    "EntryPrice",
+    "LastRepairedGamma",
+    "Last Repaired Underlying Price",
+    "Get Runtime",
+    "LastRepairedVega"
+    ]
+  },
+  {
+    label: 'StrategyInfo',
+    options: [
+      "Positions Detail",
+    "Multiplier",
+    "Max Profit",
+    "PNL Underlying",
+    "Universal Exit TSL",
+    "Max Loss",
+    "Equity",
+    "Margin",
+    "Net Quantity",
+    "Open Positions Detail",
+    "Required Capital",
+    "Capital Deployed",
+    "PNL",
+    "Open Positions",
+    "Leg Exit",
+    "Leg TSL",
+    "Leg SL trail",
+    "Traded Instrument Name",
+    "Traded Instrument"
+    ]
+  },
+  {
+    label: 'Statistis',
+    options: [
+      "Harmonic Mean",
+    "Sum",
+    "Log Return",
+    "Percentile",
+    "Percentile Rank",
+    "Variance",
+    "Log Zscore",
+    "Median",
+    "correl",
+    "Ratio",
+    "Mean",
+    "Stdev"
+    ]
+  },
+  {
+    label: 'Math',
+    options: [
+      "Math Operation",
+    "Min",
+    "Number",
+    "Max",
+    "Absolute",
+    "Round",
+    "Math Series Operation",
+    "Random Number(0.00-1.00)"
+    ]
+  },
+  {
+    label: 'Options',
+    options: [
+      "Max OI Value",
+    "Max OI Strike",
+    "Max OI Instrument",
+    "PCR",
+    "Total OI"
+    ]
+  },
+  {
+    label: 'OptionGreeks',
+    options: [
+      "Vega",
+    "Delta Neutral",
+    "lv",
+    "RHO",
+    "Net Delta",
+    "Delta",
+    "Theta",
+    "Atmiv",
+    "Theta Neutral",
+    "Gamma Neutral",
+    "Vega Neutral",
+    "Net Gamma",
+    "Net Theta",
+    "Gamma",
+    "Net Vega"
+    ]
+  },
+  {
+    label: 'StrikeFormula',
+    options: [
+      "ATM",
+    "ATM SPOT",
+    "Find Strike Crypto",
+    "Get Strike",
+    "Find Strike"
+    ]
+  },
+  {
+    label: 'ExpiryFormula',
+    options: [
+      "Crypto Current Day Expiry",
+    "Crypto Current Month Expiry",
+    "Crypto Current Week Expiry",
+    "MCX Fut Expiry",
+    "Current Month Expiry",
+    "Current Week Expiry",
+    "Previous Expiry",
+    "MCX Option Expiry",
+    "Current Day Expiry"
+    ]
+  },
+  {
+    label: 'InstrumentFormula',
+    options: [
+      "Select Expiry",
+    "Instrument Name",
+    "Futures"
+    ]
+  },
+  {
+    label: 'Rank',
+    options: [
+      "Rank top",
+    "Rank bottom"
+    ]
+  },
+  {
+    label: 'Fx',
+    options: [
+      "GBPINR",
+    "USDGBP",
+    "USDINR",
+    "EURINR"
+    ]
+  },
+  {
+    label: 'Series_Ops',
+    options: [
+      "Multiply Array",
+    "Divide Array",
+    "Sqrt",
+    "Subtract Array",
+    "Power",
+    "Add Array"
+    ]
+  },
+  {
+    label: 'Candle Patterns',
+    options: [
+      "INVERTED HAMMER",
+    "DRAGONFLY DOJI",
+    "GRAVESTONE DOJI",
+    "HAMMER",
+    "SHOOTINGSTAR",
+    "MORNINGSTAR",
+    "MORNINGDOJISTAR",
+    "ENGULFING",
+    "MARUBOZU",
+    "HARAMI",
+    "EVENINGSTAR",
+    "DOJI",
+    "HANGINGMAN"
+    ]
+  },
+  {
+    label: 'Comparison',
+    options: [
+      "+",
+    "-",
+    "*",
+    "/",
+    "%",
+    "!=",
+    "(",
+    ")"
+    ]
+  },
+];
