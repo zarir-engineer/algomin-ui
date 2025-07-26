@@ -20,6 +20,7 @@ interface ChooseBlockProps {
 
 interface PreviewBlockProps {
   id: string;
+  label: string;
   content: string;
   onRemove: (id: string) => void;
 }
@@ -28,7 +29,7 @@ function generateUniqueId(base: string): string {
   return `${base}-${Math.random().toString(36).substring(2, 9)}`;
 }
 
-function PreviewBlock({ id, content, onRemove }: PreviewBlockProps) {
+function PreviewBlock({ id, label, content, onRemove }: PreviewBlockProps) {
   const {
     attributes,
     listeners,
@@ -65,7 +66,7 @@ function PreviewBlock({ id, content, onRemove }: PreviewBlockProps) {
         <X className="w-3.5 h-3.5 text-red-600" />
       </button>
 
-      <div className="font-bold text-center text-blue-700 mb-1">SelectionPreviewBlock</div>
+      <div className="font-bold text-center text-blue-700 mb-1">{label}</div>
       <div className="text-xs text-gray-700 text-center whitespace-nowrap">{content}</div>
 
     </div>
@@ -195,16 +196,22 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
           <ContextUI
             keyword={selectedKeyword}
             params={contextParams}
-            onParamChange={(key, val) => setContextParams(prev => ({ ...prev, [key]: val }))}
-            onConfirm={() => {
-              // ✅ Add to preview
+            onParamChange={(key, val) =>
+              setContextParams(prev => ({ ...prev, [key]: val }))
+            }
+            onConfirm={(label) => {
               const uniqueId = generateUniqueId(selectedKeyword);
               setSelectedItems(prev => [
                 ...prev,
-                { id: uniqueId, label: `${selectedKeyword} (${Object.entries(contextParams).map(([k, v]) => `${k}: ${v}`).join(', ')})` }
+                {
+                  id: uniqueId,
+                  label,
+                  content: `${selectedKeyword} (${Object.entries(contextParams)
+                    .map(([k, v]) => `${k}: ${v}`)
+                    .join(', ')})`
+                },
               ]);
-              // Reset UI
-              setSelectedKeyword(null);
+              setSelectedKeyword(null); // close modal
               setContextParams({});
             }}
             onCancel={() => {
@@ -214,7 +221,6 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
           />
         )}
 
-
         {/* Sortable preview blocks */}
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={selectedItems.map(item => item.id)} strategy={horizontalListSortingStrategy}>
@@ -223,7 +229,8 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
                 <PreviewBlock
                   key={item.id}
                   id={item.id}
-                  content={`${item.label} ( Symbol (InstrumentName () , day All ) , 15, 15 ) 0`}
+                  label={item.label}
+                  content={`( Symbol (InstrumentName () , day All ) , 15, 15 ) 0`}
                   onRemove={handleRemove}
                 />
               ))}

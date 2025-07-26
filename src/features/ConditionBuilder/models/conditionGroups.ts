@@ -33,7 +33,7 @@ export const GROUPS: ConditionGroup[] = [
     label: 'Momentum & Oscillators',
     options: [
       { key: 'rsi', label: 'RSI', params: ['symbol', 'period'] },             // optInTimePeriod :contentReference[oaicite:8]{index=8}
-      { key: 'cmo', label: 'Chande Momentum Oscillator (CMO)', params: ['symbol', 'period'] }, // [optInTimePeriod] :contentReference[oaicite:9]{index=9}
+      { key: 'cmo', label: 'Chande Momentum Oscillator (CMO)', params: ['series', 'period'] }, // [optInTimePeriod] :contentReference[oaicite:9]{index=9}
       { key: 'macd', label: 'MACD', params: ['symbol', 'fast', 'slow', 'signal'] }, // 3 options :contentReference[oaicite:10]{index=10}
       { key: 'mfi', label: 'Money Flow Index (MFI)', params: ['symbol', 'period'] },      // 1 option periods :contentReference[oaicite:11]{index=11}
       { key: 'stoch', label: 'Stochastic Oscillator', params: ['symbol', 'fastK', 'slowK', 'slowD'] }, // 3 opt :contentReference[oaicite:12]{index=12}

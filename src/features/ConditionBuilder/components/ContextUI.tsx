@@ -1,7 +1,8 @@
 // src/features/ConditionBuilder/components/ContextUI.tsx
 
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { DROPDOWN_OPTIONS } from '../models/dropdownOptions';
 import { GROUPS } from '../models/conditionGroups';
 
 export interface ContextUIProps {
@@ -25,8 +26,12 @@ export default function ContextUI({ keyword, params, onParamChange, onConfirm, o
   const option = getOptionMeta(keyword);
   const [localParams, setLocalParams] = useState<Record<string, string>>(params);
 
+  useEffect(() => {
+    setLocalParams(params);
+  }, [params]);
+
   if (!option) {
-    return <div className="text-red-500">Unknown keyword: {keyword}</div>;
+    return null;
   }
 
   const handleChange = (key: string, value: string) => {
@@ -38,54 +43,52 @@ export default function ContextUI({ keyword, params, onParamChange, onConfirm, o
     return ['symbol', 'length', 'period', 'timeframe'].includes(param);
   };
 
-  const dropdownOptions: Record<string, string[]> = {
-    symbol: ['SBIN', 'NIFTY', 'BANKNIFTY', 'RELIANCE'],
-    length: ['5', '10', '14', '21'],
-    period: ['3', '5', '10', '20'],
-    timeframe: ['1m', '5m', '15m', '1d'],
-  };
 
   return (
-    <div className="p-4 bg-gray-50 border rounded-lg shadow space-y-2">
-      <h4 className="text-sm font-semibold mb-2">Parameters for {option.label}</h4>
-      {option.params.map((param) => (
-        <div key={param} className="flex flex-col gap-1">
-          <label className="text-xs text-gray-600 capitalize">{param}</label>
-          {isDropdownParam(param) ? (
-            <select
-              className="border px-2 py-1 rounded w-full text-sm"
-              value={localParams[param] || ''}
-              onChange={(e) => handleChange(param, e.target.value)}
-            >
-              <option value="">Select {param}</option>
-              {dropdownOptions[param]?.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          ) : (
-            <input
-              className="border px-2 py-1 rounded w-full text-sm"
-              value={localParams[param] || ''}
-              onChange={(e) => handleChange(param, e.target.value)}
-              placeholder={`Enter ${param}`}
-            />
-          )}
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+        <h4 className="text-lg font-semibold mb-4">Configure: {option.label}</h4>
+        <div className="space-y-3">
+          {option.params.map((param) => (
+            <div key={param} className="flex flex-col gap-1">
+              <label className="text-xs text-gray-600 capitalize">{param}</label>
+              {isDropdownParam(param) ? (
+                <select
+                  className="border px-2 py-1 rounded w-full text-sm"
+                  value={localParams[param] || ''}
+                  onChange={(e) => handleChange(param, e.target.value)}
+                >
+                  <option value="">Select {param}</option>
+                  {DROPDOWN_OPTIONS[param]?.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  className="border px-2 py-1 rounded w-full text-sm"
+                  value={localParams[param] || ''}
+                  onChange={(e) => handleChange(param, e.target.value)}
+                  placeholder={`Enter ${param}`}
+                />
+              )}
+            </div>
+          ))}
         </div>
-      ))}
 
-      <div className="pt-4 flex justify-end gap-3">
-        <button
-          onClick={onCancel}
-          className="border border-gray-300 bg-white px-3 py-1 rounded shadow-sm text-sm hover:bg-gray-100"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={onConfirm}
-          className="bg-blue-600 text-white px-4 py-1 rounded shadow-sm text-sm hover:bg-blue-700"
-        >
-          OK
-        </button>
+        <div className="pt-6 flex justify-end gap-3">
+          <button
+            onClick={onCancel}
+            className="border border-gray-300 bg-white px-4 py-1 rounded shadow-sm text-sm hover:bg-gray-100"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onConfirm(option.label)}
+            className="bg-blue-600 text-white px-4 py-1 rounded shadow-sm text-sm hover:bg-blue-700"
+          >
+            OK
+          </button>
+        </div>
       </div>
     </div>
   );
