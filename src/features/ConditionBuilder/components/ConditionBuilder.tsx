@@ -1,4 +1,4 @@
-// Enhanced ConditionBuilder.tsx with nested group support + segmented toggle
+// Enhanced ConditionBuilder.tsx with nested group support
 'use client';
 
 import React, { useEffect } from 'react';
@@ -6,6 +6,7 @@ import SymbolSelect from './SymbolSelect';
 
 const OPERATORS = ['>', '<', '>=', '<=', '==', '!='];
 
+// Define types
 export interface Condition {
   type: 'condition';
   symbol: { symbol: string; token: string };
@@ -26,12 +27,12 @@ export interface ConditionBuilderProps {
   onChange: (node: ConditionGroup) => void;
 }
 
+// Update helper
 const updateNode = (nodes: ConditionNode[], index: number, newNode: ConditionNode): ConditionNode[] => {
   return [...nodes.slice(0, index), newNode, ...nodes.slice(index + 1)];
 };
 
 export default function ConditionBuilder({ node, onChange }: ConditionBuilderProps) {
-  console.log("🚨 ConditionBuilder mounted"); // <== Add this
   useEffect(() => {
     onChange(node);
   }, [node, onChange]);
@@ -43,9 +44,7 @@ export default function ConditionBuilder({ node, onChange }: ConditionBuilderPro
       operator: '>',
       value: 0,
     };
-    const updated = { ...node, conditions: [...node.conditions, newCond] };
-    console.log("🔥🔥🔥 NEW CONDITION ADDED", updated);
-    onChange(updated);
+    onChange({ ...node, conditions: [...node.conditions, newCond] });
   };
 
   const addGroup = () => {
@@ -67,30 +66,26 @@ export default function ConditionBuilder({ node, onChange }: ConditionBuilderPro
     onChange({ ...node, conditions: newConds });
   };
 
-  const conditionCount = node.conditions.filter(c => c.type === 'condition').length;
-
   return (
-    <div className="space-y-4 border-l-4 border-blue-200 pl-4">
-      {conditionCount > 1 && (
-        <div className="flex gap-0 rounded overflow-hidden w-fit border border-blue-600 text-xs font-semibold mb-2">
-          {['AND', 'OR'].map((val) => (
-            <button
-              key={val}
-              onClick={() => onChange({ ...node, logic: val as 'AND' | 'OR' })}
-              className={`px-3 py-1 transition-colors ${
-                node.logic === val ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'
-              }`}
-            >
-              {val}
-            </button>
-          ))}
-        </div>
-      )}
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <label className="font-medium">Logic:</label>
+        <select
+          value={node.logic}
+          onChange={e => onChange({ ...node, logic: e.target.value as 'AND' | 'OR' })}
+        >
+          <option value="AND">AND</option>
+          <option value="OR">OR</option>
+        </select>
+      </div>
 
       {node.conditions.map((c, i) => (
-        <div key={i} className="relative ml-4 pl-4 border-l-2 border-blue-200 mb-4">
+        <div
+          key={i}
+          className="bg-white p-3 rounded-md shadow-md space-y-2"
+        >
           {'symbol' in c ? (
-            <div className="flex gap-2 items-center border p-2 bg-gray-50 rounded mb-2">
+            <div className="flex flex-wrap gap-2 items-center">
               <SymbolSelect
                 value={c.symbol}
                 onChange={val => updateChild(i, { ...c, symbol: val })}
@@ -112,17 +107,12 @@ export default function ConditionBuilder({ node, onChange }: ConditionBuilderPro
               <button onClick={() => removeNode(i)}>🗑</button>
             </div>
           ) : (
-            <div className="ml-2">
-              <ConditionBuilder
-                node={c}
-                onChange={updated => updateChild(i, updated)}
-              />
-            </div>
+            <ConditionBuilder node={c} onChange={updated => updateChild(i, updated)} />
           )}
         </div>
       ))}
 
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-2">
         <button onClick={addCondition}>+ Condition</button>
         <button onClick={addGroup}>+ Group</button>
       </div>
