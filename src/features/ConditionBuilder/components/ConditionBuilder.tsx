@@ -1,9 +1,12 @@
+<<<<<<< Updated upstream
 // Enhanced ConditionBuilder.tsx with nested group support + segmented toggle
+=======
+>>>>>>> Stashed changes
 'use client';
 
-import React, { useEffect } from 'react';
-import SymbolSelect from './SymbolSelect';
+import React from 'react';
 
+<<<<<<< Updated upstream
 const OPERATORS = ['>', '<', '>=', '<=', '==', '!='];
 
 export interface Condition {
@@ -126,6 +129,23 @@ export default function ConditionBuilder({ node, onChange }: ConditionBuilderPro
         <button onClick={addCondition}>+ Condition</button>
         <button onClick={addGroup}>+ Group</button>
       </div>
+=======
+interface ConditionBuilderProps {
+  id: string;
+  onDelete: () => void;
+}
+
+export default function ConditionBuilder({ id, onDelete }: ConditionBuilderProps) {
+  return (
+    <div className="bg-white border rounded-md p-4 shadow-md flex justify-between items-center">
+      <span className="text-gray-800 text-sm">Condition Block ID: {id}</span>
+      <button
+        onClick={onDelete}
+        className="red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600"
+      >
+        ❌
+      </button>
+>>>>>>> Stashed changes
     </div>
   );
 }

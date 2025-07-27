@@ -80,19 +80,23 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
   const [contextParams, setContextParams] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (inputValue.trim() === '') {
+    if (!inputValue || inputValue.trim() === '') {
       setFiltered([]);
       return;
     }
+
     const search = inputValue.toLowerCase();
     const matches = groups
       .map(group => ({
         label: group.label,
-        options: group.options.filter(opt => opt.toLowerCase().includes(search)),
+        options: group.options.filter(opt =>
+          opt.label.toLowerCase().includes(search)
+        ),
       }))
       .filter(group => group.options.length > 0);
     setFiltered(matches);
   }, [inputValue, groups]);
+
 
   const handleSelect = (opt: string) => {
     const uniqueId = generateUniqueId(opt);
@@ -126,7 +130,7 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
   };
 
   return (
-    <div className="w-full max-w-6xl mt-8 mx-auto rounded-md border border-gray-300 bg-white shadow-md overflow-visible min-h-[160px] pb-6">
+    <div className="w-full max-w-6xl mx-auto border border-gray-200 bg-white shadow-sm overflow-visible p-1">
       <div className="relative">
         <button
           onClick={handlePaste}
@@ -144,7 +148,7 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
         </button>
       </div>
 
-      <div className="flex items-start gap-6 px-4 pt-6">
+      <div className="flex items-start gap-6 px-4 pt-2"> {/* pt-2 keep padding between top and preview block */}
         {/* Choose field */}
         <div className="flex flex-col gap-2 shrink-0 z-10 w-48">
           <select
@@ -153,8 +157,8 @@ export default function ChooseBlock({ onDelete, inputValue, onChange, onSelectOp
               const keyword = e.target.value;
               setSelectedKeyword(keyword);
               setContextParams({});
-              onChange(keyword); // update parent
-              onSelectOption(keyword); // trigger preview
+              onChange(keyword.key); // send just the key (e.g., 'natr')
+              onSelectOption(keyword.key); // optional — depends on usage
             }}
           >
 

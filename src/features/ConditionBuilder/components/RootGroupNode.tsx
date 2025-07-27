@@ -16,15 +16,20 @@ import ReactFlow, {
   Position,
   ReactFlowInstance,
 } from 'reactflow';
-import 'reactflow/dist/style.css';
+import 'reactflow/dist/style.css'
 import { GROUPS } from '@/src/features/ConditionBuilder/models/conditionGroups'
 import ChooseBlock from '@/src/features/ConditionBuilder/components/ChooseBlock'
+import ConditionBuilder from './ConditionBuilder';
+import { v4 as uuidv4 } from 'uuid';
+
 
 function RootGroupNode({ data }: any) {
-  const [showCondition, setShowCondition] = useState(false);
+  const [chooseBlocks, setChooseBlocks] = useState<{ id: string; inputValue: string }[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [filtered, setFiltered] = useState<{ label: string; options: string[] }[]>([]);
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [logic, setLogic] = useState<'AND' | 'OR'>('AND');
+
 
   useEffect(() => {
     if (inputValue.trim() === '') {
@@ -64,7 +69,9 @@ function RootGroupNode({ data }: any) {
         <div className="flex gap-2 ml-auto">
           <button
             className="text-xs px-2 py-1 bg-green-200 rounded"
-            onClick={() => setShowCondition(true)}
+            onClick={() =>
+              setChooseBlocks(prev => [...prev, { id: crypto.randomUUID(), inputValue: '' }])
+            }
           >
             + Condition
           </button>
@@ -72,17 +79,83 @@ function RootGroupNode({ data }: any) {
           <button className="text-xs px-2 py-1 bg-red-200 rounded">×</button>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        {showCondition && (
-          <ChooseBlock
-            inputValue={inputValue}
-            onChange={setInputValue}
-            onDelete={() => setShowCondition(false)}
-            groups={GROUPS}
-            onSelectOption={handleSelectOption}
-          />
-        )}
-      </div>
+
+      {chooseBlocks.length > 1 && (
+        <div className="relative pl-6 mb-2">
+          {/* vertical bracket line */}
+          <div className="absolute left-2 top-0 bottom-2 w-px bg-gray-400 z-0" />
+
+          {/* AND/OR logic toggle */}
+          <div className="mb-1 flex items-center gap-2 z-10 relative">
+            <label className="text-xs font-semibold text-gray-700">Logic:</label>
+            <div className="inline-flex border rounded overflow-hidden text-xs">
+              <button
+                className={`px-2 py-1 ${logic === 'AND' ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}
+                onClick={() => setLogic('AND')}
+              >
+                AND
+              </button>
+              <button
+                className={`px-2 py-1 ${logic === 'OR' ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}
+                onClick={() => setLogic('OR')}
+              >
+                OR
+              </button>
+            </div>
+          </div>
+
+          {/* block list with elbow lines */}
+          <div className="flex flex-col gap-[2px] relative z-10">
+            {chooseBlocks.map(block => (
+              <div key={block.id} className="relative">
+                {/* elbow connector */}
+                <div className="absolute -left-4 top-4 w-4 h-px bg-gray-400" />
+                <ChooseBlock
+                  key={block.id}
+                  inputValue={block.inputValue}
+                  onChange={(val) =>
+                    setChooseBlocks(prev =>
+                      prev.map(b => b.id === block.id ? { ...b, inputValue: val } : b)
+                    )
+                  }
+                  onDelete={() =>
+                    setChooseBlocks(prev => prev.filter(b => b.id !== block.id))
+                  }
+                  groups={GROUPS}
+                  onSelectOption={(opt) => {
+                    console.log('Selected:', opt, 'in block:', block.id);
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Fallback when only one block or zero */}
+      {chooseBlocks.length <= 1 && (
+        <div className="flex flex-col gap-2">
+          {chooseBlocks.map(block => (
+            <ChooseBlock
+              key={block.id}
+              inputValue={block.inputValue}
+              onChange={(val) =>
+                setChooseBlocks(prev =>
+                  prev.map(b => b.id === block.id ? { ...b, inputValue: val } : b)
+                )
+              }
+              onDelete={() =>
+                setChooseBlocks(prev => prev.filter(b => b.id !== block.id))
+              }
+              groups={GROUPS}
+              onSelectOption={(opt) => {
+                console.log('Selected:', opt, 'in block:', block.id);
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       <Handle type="source" position={Position.Bottom} />
       <Handle type="target" position={Position.Top} />
     </div>
