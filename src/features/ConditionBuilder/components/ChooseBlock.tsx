@@ -49,7 +49,7 @@
         style={style}
         {...attributes}
         {...listeners}
-        className="relative bg-white border border-blue-300 shadow-md rounded-md p-2 text-sm text-blue-700 w-fit min-w-[160px]"
+        className="relative bg-white border border-blue-300 shadow-md rounded-md p-2 text-sm text-blue-700 w-fit min-w-[160px] min-h-[80px] flex flex-col justify-center border-red-500 border"
       >
         <button
           onClick={() => setClipboard(content)}
@@ -228,7 +228,7 @@
           {/* Sortable preview blocks */}
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={selectedItems.map(item => item.id)} strategy={horizontalListSortingStrategy}>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 items-stretch min-h-[80px]">
                 {selectedItems.map((item) => (
                   <PreviewBlock
                     key={item.id}
