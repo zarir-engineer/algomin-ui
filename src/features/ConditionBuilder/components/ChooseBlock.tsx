@@ -31,13 +31,21 @@ function generateUniqueId(base: string): string {
 function PreviewBlock({ id, label, content, onRemove }: { id: string; label: string; content: string; onRemove: (id: string) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition };
+  const addClipboard = (content: string) => {
+    console.log('🔍 Copying content:', content);
+    setClipboard(content);
+  };
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}
       className="relative bg-white border border-blue-300 shadow-md rounded-md p-2 text-sm text-blue-700 w-fit min-w-[160px] min-h-[60px] flex items-center"
     >
-      <button onClick={() => setClipboard(content)} className="absolute -top-3 -left-3 z-10 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow" title="Copy Block">
-        <Copy className="w-3.5 h-3.5 text-blue-600" />
+      <button
+        onClick={addClipboard(content)}
+        className="absolute -top-3 -left-3 z-10 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow"
+        title="Copy Block"
+      >
+        <Copy className="w-3.5 h-3.5 text-blue-600 group-hover:text-green-600" />
       </button>
       <button onClick={() => onRemove(id)} className="absolute -top-3 -right-3 z-10 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow" title="Remove Block">
         <X className="w-3.5 h-3.5 text-red-600" />
@@ -86,6 +94,7 @@ export default function ChooseBlock({
 
   const handlePaste = () => {
     const data = getClipboard();
+    console.log('🔍 Pasting content:', data);
     if (data) {
       const uniqueId = generateUniqueId(data);
       onSelectedItemsChange([...selectedItems, { id: uniqueId, label: data }]);
@@ -131,6 +140,7 @@ export default function ChooseBlock({
               onChange(key);
               onSelectOption(key);
             }}
+            className="border border-gray-300 rounded h-8"
           >
             <option value="">Choose...</option>
             {GROUPS.map(group => (
@@ -180,7 +190,13 @@ export default function ChooseBlock({
           <SortableContext items={selectedItems.map(item => item.id)} strategy={horizontalListSortingStrategy}>
             <div className="flex flex-wrap gap-4 items-stretch min-h-[80px]">
               {selectedItems.map(item => (
-                <PreviewBlock key={item.id} id={item.id} label={item.label} content={item.label} onRemove={handleRemove} />
+                <PreviewBlock content={JSON.stringify({ label: item.label, params: contextParams })}
+                              key={item.id}
+                              id={item.id}
+                              label={item.label}
+                              content={item.label}
+                              onRemove={handleRemove}
+                />
               ))}
             </div>
           </SortableContext>

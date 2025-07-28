@@ -25,7 +25,7 @@ const initialNodes: Node<unknown, { operator: 'AND' | 'OR' }>[] = [
     type: 'rootGroupNode',
     position: { x: 0, y: 0 },
     data: { operator: 'AND' },
-    style: { width: '80%', height: '80%' },
+    style: { width: '100vw', height: '100vh' },
   },
 ];
 
