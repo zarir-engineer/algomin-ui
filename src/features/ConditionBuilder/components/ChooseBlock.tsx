@@ -38,7 +38,7 @@ function PreviewBlock({ id, label, content, onRemove }: { id: string; label: str
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}
-      className="relative bg-white border border-blue-300 shadow-md rounded-md p-2 text-sm text-blue-700 w-fit min-w-[160px] min-h-[60px] flex items-center"
+      className="relative bg-white border border-blue-200 shadow-sm rounded-sm p-1 text-xs text-blue-700 w-fit min-w-[120px] min-h-0 flex items-center gap-1 overflow-visible"
     >
       <button
         onClick={addClipboard(content)}

@@ -46,7 +46,7 @@ export default function RootGroupNodeBuilder() {
 
   return (
     <ReactFlowProvider>
-      <div ref={reactFlowWrapper} style={{ width: '100%', height: '100vh' }}>
+      <div ref={reactFlowWrapper} className="w-full h-screen overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -69,5 +69,6 @@ export default function RootGroupNodeBuilder() {
         </ReactFlow>
       </div>
     </ReactFlowProvider>
+
   );
 }
