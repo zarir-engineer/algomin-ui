@@ -72,6 +72,10 @@ export default function ChooseBlock({
 }: ChooseBlockProps) {
   const [filtered, setFiltered] = React.useState<typeof groups>([]);
 
+  const selectedOption = GROUPS
+    .flatMap(group => group.options)
+    .find(opt => opt.key === selectedKeyword);
+
   useEffect(() => {
     if (!inputValue.trim()) {
       setFiltered([]);
@@ -153,12 +157,16 @@ export default function ChooseBlock({
           </select>
 
           {filtered.length > 0 && (
-            <ul className="mt-1 bg-white border rounded shadow text-xs max-h-40 overflow-auto z-10">
+            <ul className="absolute top-full left-0 w-full bg-white border z-50 shadow text-xs">
               {filtered.map((group, gi) => (
                 <React.Fragment key={gi}>
                   <li className="px-2 py-1 font-semibold text-gray-500 bg-gray-50 cursor-default">{group.label}</li>
                   {group.options.map((opt, i) => (
-                    <li key={i} className="px-2 py-1 hover:bg-blue-100 cursor-pointer" onClick={() => handleSelect(opt.label)}>
+                    <li
+                      key={i}
+                      className="px-2 py-1 hover:bg-blue-100 cursor-pointer"
+                      onClick={() => handleSelect(opt.label)}
+                    >
                       {opt.label}
                     </li>
                   ))}
@@ -168,11 +176,11 @@ export default function ChooseBlock({
           )}
         </div>
 
-        {selectedKeyword && (
+        {selectedKeyword && selectedOption && (
           <ContextUI
             keyword={selectedKeyword}
-            params={contextParams}
-            onParamChange={(k, v) => onContextParamsChange({ ...contextParams, [k]: v })}
+            params={selectedOption?.params || []} // ✅ Must be an array!
+            onParamChange={(key, val) => onContextParamsChange(prev => ({ ...prev, [key]: val }))}
             onConfirm={(label) => {
               const uniqueId = generateUniqueId(selectedKeyword);
               onSelectedItemsChange([...selectedItems, { id: uniqueId, label }]);

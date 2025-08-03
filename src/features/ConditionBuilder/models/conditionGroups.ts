@@ -25,7 +25,7 @@ export const GROUPS: ConditionGroup[] = [
     options: [
       { key: 'atr', label: 'Average True Range (ATR)', params: ['symbol', 'period'] },    // 1 option period :contentReference[oaicite:4]{index=4}
       { key: 'natr', label: 'Normalized ATR', params: ['symbol', 'period'] },            // requires period :contentReference[oaicite:5]{index=5}
-      { key: 'bbands', label: 'Bollinger Bands', params: ['symbol', 'timeperiod', 'stdDev'] }, // 2 options :contentReference[oaicite:6]{index=6}
+      { key: 'bbands', label: 'Bollinger Bands', params: [{ name: 'period', type: 'number' }, { name: 'series', type: 'series' } ]}, // 2 options :contentReference[oaicite:6]{index=6}
       { key: 'var', label: 'Variance Over Period', params: ['symbol', 'period'] },        // requires period :contentReference[oaicite:7]{index=7}
     ],
   },

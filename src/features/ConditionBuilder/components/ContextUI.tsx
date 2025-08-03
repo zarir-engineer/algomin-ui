@@ -49,26 +49,26 @@ export default function ContextUI({ keyword, params, onParamChange, onConfirm, o
       <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
         <h4 className="text-lg font-semibold mb-4">Configure: {option.label}</h4>
         <div className="space-y-3">
-          {option.params.map((param) => (
-            <div key={param} className="flex flex-col gap-1">
-              <label className="text-xs text-gray-600 capitalize">{param}</label>
-              {isDropdownParam(param) ? (
+          {option.params.map((param, index) => (
+            <div key={`${param.name}-${index}`} className="flex flex-col gap-1">
+              <label className="text-xs text-gray-600 capitalize">{param.name}</label>
+              {isDropdownParam(param.name) ? (
                 <select
                   className="border px-2 py-1 rounded w-full text-sm"
-                  value={localParams[param] || ''}
-                  onChange={(e) => handleChange(param, e.target.value)}
+                  value={localParams[param.name] || ''}
+                  onChange={(e) => handleChange(param.name, e.target.value)}
                 >
-                  <option value="">Select {param}</option>
-                  {DROPDOWN_OPTIONS[param]?.map((opt) => (
+                  <option value="">Select {param.name}</option>
+                  {DROPDOWN_OPTIONS[param.name]?.map((opt) => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
               ) : (
                 <input
                   className="border px-2 py-1 rounded w-full text-sm"
-                  value={localParams[param] || ''}
-                  onChange={(e) => handleChange(param, e.target.value)}
-                  placeholder={`Enter ${param}`}
+                  value={localParams[param.name] || ''}
+                  onChange={(e) => handleChange(param.name, e.target.value)}
+                  placeholder={`Enter ${param.name}`}
                 />
               )}
             </div>
