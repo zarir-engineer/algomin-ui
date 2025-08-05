@@ -59,7 +59,39 @@ export const GROUPS: ConditionGroup[] = [
       { key: 'sma', label: 'Simple Moving Avg (SMA)', params: [{ name: 'period', type: 'number' }] },
       { key: 'tema', label: 'Triple EMA (TEMA)', params: [{ name: 'period', type: 'number' }] },
       { key: 'dema', label: 'Double EMA (DEMA)', params: [{ name: 'period', type: 'number' }] },
-      { key: 'linreg', label: 'Linear Regression', params: [{ name: 'period', type: 'number' }] },
+//       { key: 'linreg', label: 'Linear Regression', params: [{ name: 'period', type: 'number' }] },
+      {
+        key: 'linreg',
+        label: 'Linear Regression',
+        params: [
+          { name: 'series', type: 'series' },
+          { name: 'period', type: 'number' }
+        ]
+      },
+      {
+        key: 'linregangle',
+        label: 'Linear Regression Angle',
+        params: [
+          { name: 'series', type: 'series' },
+          { name: 'period', type: 'number' }
+        ]
+      },
+      {
+        key: 'linregintercept',
+        label: 'Linear Regression Intercept',
+        params: [
+          { name: 'series', type: 'series' },
+          { name: 'period', type: 'number' }
+        ]
+      },
+      {
+        key: 'linregslope',
+        label: 'Linear Regression Slope',
+        params: [
+          { name: 'series', type: 'series' },
+          { name: 'period', type: 'number' }
+        ]
+      }
     ],
   },
 ];

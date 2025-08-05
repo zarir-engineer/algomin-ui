@@ -4,6 +4,8 @@
 import React, { useState, useEffect } from 'react';
 import { DROPDOWN_OPTIONS } from '../models/dropdownOptions';
 import { GROUPS } from '../models/conditionGroups';
+import { PARAM_OPTIONS } from '../config/paramOptions';
+import axios from 'axios';
 
 export interface ContextUIProps {
   keyword: string;
@@ -12,6 +14,31 @@ export interface ContextUIProps {
   onConfirm: () => void;
   onCancel: () => void;
 }
+
+function SeriesDropdown({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [seriesOptions, setSeriesOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    axios.get('/api/param-options?type=series')
+      .then(res => setSeriesOptions(res.data))
+      .catch(err => console.error('Failed to fetch series options', err));
+  }, []);
+
+  useEffect(() => {
+    axios.get('/api/param-options?type=underlying')
+      .then(res => setSeriesOptions(res.data))
+      .catch(err => console.error('Failed to fetch series options', err));
+  }, []);
+
+  return (
+    <select value={value} onChange={e => onChange(e.target.value)} className="border p-1 rounded">
+      {seriesOptions.map(opt => (
+        <option key={opt} value={opt}>{opt}</option>
+      ))}
+    </select>
+  );
+}
+
 
 function getOptionMeta(keyword: string) {
   for (const group of GROUPS) {
@@ -52,25 +79,25 @@ export default function ContextUI({ keyword, params, onParamChange, onConfirm, o
           {option.params.map((param, index) => (
             <div key={`${param.name}-${index}`} className="flex flex-col gap-1">
               <label className="text-xs text-gray-600 capitalize">{param.name}</label>
-              {isDropdownParam(param.name) ? (
-                <select
-                  className="border px-2 py-1 rounded w-full text-sm"
-                  value={localParams[param.name] || ''}
-                  onChange={(e) => handleChange(param.name, e.target.value)}
-                >
-                  <option value="">Select {param.name}</option>
-                  {DROPDOWN_OPTIONS[param.name]?.map((opt) => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  className="border px-2 py-1 rounded w-full text-sm"
-                  value={localParams[param.name] || ''}
-                  onChange={(e) => handleChange(param.name, e.target.value)}
-                  placeholder={`Enter ${param.name}`}
-                />
-              )}
+                {PARAM_OPTIONS[param.type] ? (
+                  <select
+                    className="border px-2 py-1 rounded w-full text-sm"
+                    value={localParams[param.name] || ''}
+                    onChange={(e) => handleChange(param.name, e.target.value)}
+                  >
+                    <option value="">Select {param.name}</option>
+                    {PARAM_OPTIONS[param.type].map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    className="border px-2 py-1 rounded w-full text-sm"
+                    value={localParams[param.name] || ''}
+                    onChange={(e) => handleChange(param.name, e.target.value)}
+                    placeholder={`Enter ${param.name}`}
+                  />
+                )}
             </div>
           ))}
         </div>
